@@ -1,1288 +1,1046 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="light-theme.css">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f0">
 <title>Groww Tracker</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --surface: #111118;
-  --card: #16161f;
-  --border: #1e1e2a;
-  --border2: #2a2a3a;
-  --text: #f0f0f8;
-  --muted: #6b6b80;
-  --dim: #3a3a50;
-  --green: #00e676;
-  --green-dim: #00e67620;
-  --green-mid: #00e67650;
-  --red: #ff4f6a;
-  --red-dim: #ff4f6a20;
-  --red-mid: #ff4f6a50;
-  --blue: #4dabf7;
-  --blue-dim: #4dabf720;
-  --gold: #ffd54f;
-  --gold-dim: #ffd54f20;
-  --purple: #b39dff;
-  --purple-dim: #b39dff20;
-  --teal: #00bcd4;
-  --teal-dim: #00bcd420;
-  --accent: #5c6bc0;
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --nav-h: 64px;
+  --bg:      #f0f0eb;
+  --surface: #fafaf7;
+  --card:    #ffffff;
+  --card2:   #f7f7f3;
+  --border:  #e2e2da;
+  --border2: #d0d0c8;
+  --text:    #1a1a18;
+  --text2:   #3a3a36;
+  --muted:   #888880;
+  --muted2:  #b0b0a8;
+  --green:        #1a8a4a;
+  --green-bg:     #e8f5ee;
+  --green-border: #b8dfc8;
+  --green-light:  #d0eddc;
+  --red:        #c0392b;
+  --red-bg:     #fcecea;
+  --red-border: #f0b8b2;
+  --red-light:  #f8d8d5;
+  --blue:        #1e6eb5;
+  --blue-bg:     #e8f1fb;
+  --blue-border: #b8d4f0;
+  --gold:        #b07800;
+  --gold-bg:     #fdf5e0;
+  --gold-border: #f0d888;
+  --purple:        #6b3fcc;
+  --purple-bg:     #f0eafb;
+  --purple-border: #d0b8f0;
+  --teal:        #1a8a88;
+  --teal-bg:     #e5f5f5;
+  --orange:        #c05010;
+  --orange-bg:     #fdf0e8;
+  --font-h: 'Inter', sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+  --r: 14px; --rs: 10px; --nav: 60px;
+  --max: 480px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-mono); overflow: hidden; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; background:var(--bg); color:var(--text); font-family:var(--font-h); overflow:hidden; -webkit-font-smoothing:antialiased; }
 
-/* SCROLLABLE PAGES */
-#app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
-.page { display: none; flex: 1; overflow-y: auto; padding: 0 0 calc(var(--nav-h) + 16px); }
-.page.active { display: block; }
-.page-inner { padding: 16px; }
+#app { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:var(--max); margin:0 auto; position:relative; }
 
-/* NAV */
+.page { display:none; flex:1; overflow-y:auto; padding-bottom:calc(var(--nav) + 16px); background:var(--bg); }
+.page.active { display:block; }
+.pi { padding:12px 14px 0; }
+
+/* ── NAV ── */
 nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h);
-  background: var(--surface); border-top: 1px solid var(--border);
-  display: flex; align-items: center; z-index: 100;
-  backdrop-filter: blur(12px);
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:var(--max);
+  height:var(--nav); background:var(--card); border-top:1px solid var(--border);
+  display:flex; align-items:center; z-index:100;
+  box-shadow:0 -2px 12px rgba(0,0,0,0.06);
 }
-.nav-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; border: none; background: none; cursor: pointer; padding: 8px 0;
-  color: var(--muted); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.08em;
-  transition: color 0.2s; text-transform: uppercase;
-}
-.nav-btn.active { color: var(--green); }
-.nav-icon { font-size: 20px; transition: transform 0.2s; }
-.nav-btn.active .nav-icon { transform: translateY(-2px); }
+.nb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border:none; background:none; cursor:pointer; padding:8px 0; color:var(--muted); font-family:var(--font-h); font-size:9px; font-weight:500; letter-spacing:.04em; transition:color .2s; text-transform:uppercase; }
+.nb.active { color:var(--green); }
+.ni { font-size:18px; transition:transform .15s; }
+.nb.active .ni { transform:translateY(-2px); }
 
-/* HEADER */
-.pg-header { padding: 20px 16px 8px; }
-.pg-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--text); }
-.pg-sub { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.05em; }
+/* ── HEADER ── */
+.ph { padding:20px 14px 8px; display:flex; align-items:center; justify-content:space-between; }
+.pt { font-size:22px; font-weight:800; color:var(--text); letter-spacing:-.02em; }
+.ps { font-size:11px; color:var(--muted); margin-top:2px; }
+.ph-right { }
 
-/* CARDS */
-.card {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 16px; margin-bottom: 12px;
-}
-.card-label { font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-.card-value { font-family: var(--font-display); font-size: 26px; font-weight: 700; }
-.card-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+/* ── HERO ── */
+.hero { background:var(--green); border-radius:var(--r); padding:20px 16px; margin-bottom:10px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.08); border-radius:50%; pointer-events:none; }
+.hero::after { content:''; position:absolute; bottom:-30px; left:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; pointer-events:none; }
+.hero-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.7); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; }
+.hero-val { font-size:38px; font-weight:800; color:#fff; letter-spacing:-.03em; line-height:1; font-family:var(--font-h); }
+.hero-sub { font-size:12px; color:rgba(255,255,255,0.8); margin-top:8px; font-weight:500; }
+.hero-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.2); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; color:#fff; margin-top:8px; }
 
-.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.kpi { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 12px; }
-.kpi-label { font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-.kpi-val { font-family: var(--font-display); font-size: 19px; font-weight: 700; }
-.kpi-change { font-size: 10px; margin-top: 4px; }
+/* ── KPI GRID ── */
+.kg { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.kpi { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
+.kpi-l { font-size:9px; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px; }
+.kpi-v { font-size:20px; font-weight:800; letter-spacing:-.02em; font-family:var(--font-h); }
+.kpi-s { font-size:10px; margin-top:3px; color:var(--muted); font-weight:400; }
 
-/* COLORS */
-.c-green { color: var(--green); }
-.c-red { color: var(--red); }
-.c-gold { color: var(--gold); }
-.c-blue { color: var(--blue); }
-.c-purple { color: var(--purple); }
-.c-teal { color: var(--teal); }
-.c-muted { color: var(--muted); }
+/* ── STAT ROW ── */
+.sr { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
+.sc { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:11px 8px; text-align:center; box-shadow:var(--shadow); }
+.sv { font-size:18px; font-weight:800; font-family:var(--font-h); letter-spacing:-.02em; }
+.sl { font-size:9px; font-weight:600; color:var(--muted); margin-top:3px; letter-spacing:.06em; text-transform:uppercase; }
 
-.bg-green { background: var(--green-dim); border-color: var(--green-mid) !important; }
-.bg-red { background: var(--red-dim); border-color: var(--red-mid) !important; }
+/* ── SECTION LABEL ── */
+.sl2 { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin:18px 0 9px; padding-bottom:6px; border-bottom:2px solid var(--border); }
 
-/* SECTION LABEL */
-.section-label {
-  font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase;
-  margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
-}
+/* ── CARD ── */
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:14px; margin-bottom:10px; box-shadow:var(--shadow); }
 
-/* BAR CHART */
-.bar-chart { display: flex; flex-direction: column; gap: 10px; }
-.bar-row { display: flex; align-items: center; gap: 10px; }
-.bar-label { font-size: 11px; color: var(--muted); width: 48px; flex-shrink: 0; text-align: right; }
-.bar-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(.23,1,.32,1); }
-.bar-num { font-size: 11px; width: 80px; flex-shrink: 0; font-family: var(--font-mono); }
+/* ── SUMMARY ROW (horizontal stat inside card) ── */
+.sum-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); }
+.sum-row:last-child { border-bottom:none; padding-bottom:0; }
+.sum-row:first-child { padding-top:0; }
+.sum-label { font-size:12px; font-weight:500; color:var(--text2); }
+.sum-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.sum-val { font-size:13px; font-weight:700; font-family:var(--font-m); letter-spacing:-.01em; }
 
-/* TRADE LIST */
-.trade-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 0; border-bottom: 1px solid var(--border);
-}
-.trade-item:last-child { border-bottom: none; }
-.trade-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.trade-dot.profit { background: var(--green); box-shadow: 0 0 6px var(--green-mid); }
-.trade-dot.loss { background: var(--red); box-shadow: 0 0 6px var(--red-mid); }
-.trade-info { flex: 1; min-width: 0; }
-.trade-name { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.trade-date { font-size: 10px; color: var(--muted); margin-top: 2px; }
-.trade-pnl { font-family: var(--font-display); font-size: 14px; font-weight: 600; flex-shrink: 0; }
+/* ── TRADE ITEM ── */
+.ti { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--border); }
+.ti:last-child { border-bottom:none; }
+.td { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.td.p { background:var(--green); }
+.td.l { background:var(--red); }
+.tinfo { flex:1; min-width:0; }
+.tname { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tdate { font-size:10px; color:var(--muted); margin-top:1px; font-family:var(--font-m); }
+.tnote { font-size:10px; color:var(--muted2); margin-top:1px; font-style:italic; }
+.tpnl { font-family:var(--font-m); font-size:13px; font-weight:600; flex-shrink:0; }
 
-/* FORMS */
-.form-group { margin-bottom: 14px; }
-.form-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; display: block; }
-.form-input, .form-select {
-  width: 100%; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-  color: var(--text); font-family: var(--font-mono); font-size: 14px; padding: 11px 14px;
-  outline: none; transition: border-color 0.2s; -webkit-appearance: none; appearance: none;
-}
-.form-input:focus, .form-select:focus { border-color: var(--green); }
-.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%236b6b80'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* ── BAR CHART ── */
+.bc { display:flex; flex-direction:column; gap:10px; }
+.br { display:flex; align-items:center; gap:8px; }
+.bl { font-size:10px; font-weight:500; color:var(--muted); width:66px; flex-shrink:0; text-align:right; }
+.bt { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.bf { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
+.bn { font-size:10px; font-family:var(--font-m); font-weight:500; width:68px; flex-shrink:0; text-align:right; }
 
-.btn {
-  width: 100%; padding: 14px; border-radius: var(--radius-sm); border: none; cursor: pointer;
-  font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: 0.04em;
-  transition: opacity 0.2s, transform 0.1s; text-transform: uppercase;
-}
-.btn:active { transform: scale(0.98); }
-.btn-green { background: var(--green); color: #000; }
-.btn-red { background: var(--red); color: #fff; }
-.btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
-.btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
+/* ── DUAL BAR ── */
+.dbar-row { margin-bottom:14px; }
+.dbar-row:last-child { margin-bottom:0; }
+.dbar-top { display:flex; justify-content:space-between; font-size:11px; font-weight:600; margin-bottom:4px; }
+.dbar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:3px; }
+.dbar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
+.dbar-sub { display:flex; justify-content:space-between; font-size:10px; font-weight:500; }
 
-/* PIN OVERLAY */
-#pin-overlay {
-  position: fixed; inset: 0; background: rgba(10,10,15,0.96); z-index: 1000;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
-  backdrop-filter: blur(8px);
-}
-.pin-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--text); }
-.pin-dots { display: flex; gap: 14px; }
-.pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border2); transition: all 0.2s; }
-.pin-dot.filled { background: var(--green); border-color: var(--green); box-shadow: 0 0 10px var(--green-mid); }
-.pin-grid { display: grid; grid-template-columns: repeat(3, 70px); gap: 10px; }
-.pin-key {
-  height: 70px; background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius);
-  font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--text);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, transform 0.1s;
-}
-.pin-key:active { background: var(--border2); transform: scale(0.95); }
-.pin-error { color: var(--red); font-size: 12px; }
+/* ── FORMS ── */
+.fg { margin-bottom:12px; }
+.fl { font-size:10px; font-weight:600; color:var(--text2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; display:block; }
+.fi, .fs { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:var(--rs); color:var(--text); font-family:var(--font-h); font-size:14px; font-weight:500; padding:11px 13px; outline:none; transition:border-color .2s; -webkit-appearance:none; appearance:none; }
+.fi:focus, .fs:focus { border-color:var(--green); box-shadow:0 0 0 3px var(--green-bg); }
+.fs { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%23888880'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; }
+.fr2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn { width:100%; padding:13px; border-radius:var(--rs); border:none; cursor:pointer; font-family:var(--font-h); font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .15s; text-transform:uppercase; box-shadow:var(--shadow); }
+.btn:active { transform:scale(.98); }
+.btn-g { background:var(--green); color:#fff; }
+.btn-r { background:var(--red); color:#fff; }
+.btn-b { background:var(--blue); color:#fff; }
+.btn-ghost { background:transparent; border:1.5px solid var(--border2); color:var(--muted); box-shadow:none; }
+.btn-sm { padding:8px 14px; font-size:11px; width:auto; }
+.btn-xs { padding:5px 10px; font-size:10px; width:auto; border-radius:6px; }
 
-/* MONTH TABS */
-.month-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; margin-bottom: 14px; }
-.month-tabs::-webkit-scrollbar { display: none; }
-.month-tab {
-  flex-shrink: 0; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border2);
-  background: transparent; color: var(--muted); font-family: var(--font-mono); font-size: 11px;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap;
-}
-.month-tab.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+/* ── TOGGLE ── */
+.tr { display:flex; border:1.5px solid var(--border); border-radius:var(--rs); overflow:hidden; margin-bottom:14px; background:var(--card2); }
+.tb { flex:1; padding:9px 4px; background:transparent; border:none; color:var(--muted); font-family:var(--font-h); font-size:10px; font-weight:600; cursor:pointer; transition:all .2s; letter-spacing:.02em; }
+.tb.active { background:var(--green); color:#fff; border-radius:calc(var(--rs) - 1px); }
 
-/* TOAST */
-#toast {
-  position: fixed; bottom: calc(var(--nav-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--card); border: 1px solid var(--border2); border-radius: 30px;
-  padding: 10px 20px; font-size: 13px; z-index: 500; opacity: 0; pointer-events: none;
-  transition: all 0.3s; white-space: nowrap;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* ── MONTH TABS ── */
+.mt { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; margin-bottom:12px; }
+.mt::-webkit-scrollbar { display:none; }
+.mtb { flex-shrink:0; padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--muted); font-family:var(--font-h); font-size:11px; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; box-shadow:var(--shadow); }
+.mtb.active { background:var(--green); border-color:var(--green); color:#fff; }
 
-/* LOADER */
-.loader { display: flex; align-items: center; justify-content: center; padding: 40px; }
-.spin { width: 24px; height: 24px; border: 2px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* ── TOAST ── */
+#toast { position:fixed; bottom:calc(var(--nav) + 14px); left:50%; transform:translateX(-50%) translateY(16px); background:var(--text); color:var(--card); border-radius:24px; padding:9px 18px; font-size:12px; font-weight:500; z-index:500; opacity:0; pointer-events:none; transition:all .3s; white-space:nowrap; font-family:var(--font-h); }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* EMPTY STATE */
-.empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
-.empty-icon { font-size: 36px; margin-bottom: 12px; }
+/* ── LOADER ── */
+.loader { display:flex; align-items:center; justify-content:center; padding:40px; }
+.spin { width:22px; height:22px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* TOGGLE */
-.toggle-row { display: flex; gap: 0; border: 1px solid var(--border2); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 14px; }
-.toggle-btn { flex: 1; padding: 9px; background: transparent; border: none; color: var(--muted); font-family: var(--font-mono); font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.toggle-btn.active { background: var(--green-dim); color: var(--green); }
+/* ── EMPTY ── */
+.empty { text-align:center; padding:36px 20px; color:var(--muted); font-size:12px; }
+.ei { font-size:32px; margin-bottom:10px; }
 
-/* EXPENSE BADGE */
-.exp-cat { font-size: 9px; padding: 2px 8px; border-radius: 10px; background: var(--blue-dim); color: var(--blue); letter-spacing: 0.05em; }
+/* ── GOAL BAR ── */
+.gbt { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin:8px 0 5px; }
+.gbf { height:100%; border-radius:4px; background:var(--green); transition:width 1s cubic-bezier(.23,1,.32,1); }
 
-/* MINI STAT */
-.mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-.mini-stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
-.mini-stat-val { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
-.mini-stat-label { font-size: 9px; color: var(--muted); margin-top: 3px; letter-spacing: 0.08em; text-transform: uppercase; }
+/* ── BADGES ── */
+.badge { display:inline-block; font-size:9px; font-weight:600; padding:2px 8px; border-radius:10px; letter-spacing:.04em; }
+.b-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+.b-red { background:var(--red-bg); color:var(--red); border:1px solid var(--red-border); }
+.b-blue { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+.b-gold { background:var(--gold-bg); color:var(--gold); border:1px solid var(--gold-border); }
+.b-purple { background:var(--purple-bg); color:var(--purple); border:1px solid var(--purple-border); }
 
-/* SETUP PAGE */
-.setup-card { background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius); padding: 20px; }
-.setup-step { display: flex; gap: 14px; margin-bottom: 20px; }
-.step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--green-dim); border: 1px solid var(--green); color: var(--green); font-family: var(--font-display); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-.step-body { flex: 1; }
-.step-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-.step-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
-.code-block { background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 10px; color: var(--green); margin-top: 8px; overflow-x: auto; white-space: pre; font-family: var(--font-mono); }
-.copy-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; background: var(--green-dim); border: 1px solid var(--green-mid); border-radius: var(--radius-sm); color: var(--green); font-size: 11px; cursor: pointer; font-family: var(--font-mono); }
+/* ── COLORS ── */
+.cg{color:var(--green)}.cr{color:var(--red)}.cb{color:var(--blue)}.cgo{color:var(--gold)}.cp{color:var(--purple)}.ct{color:var(--teal)}.co{color:var(--orange)}.cm{color:var(--muted)}
 
-a { color: var(--blue); }
+/* ── BEST/WORST ── */
+.bw-card { border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
+.bw-green { background:var(--green-bg); border:1px solid var(--green-border); }
+.bw-red { background:var(--red-bg); border:1px solid var(--red-border); }
 
-/* GOAL TRACKER */
-.goal-bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
-.goal-bar-fill { height: 100%; border-radius: 4px; background: var(--green); transition: width 0.8s cubic-bezier(.23,1,.32,1); }
+/* ── INSIGHT ── */
+.insight { background:var(--gold-bg); border:1px solid var(--gold-border); border-left:3px solid var(--gold); border-radius:var(--rs); padding:10px 12px; margin-bottom:8px; font-size:11px; font-weight:500; color:var(--text2); line-height:1.6; }
+.insight strong { color:var(--gold); }
 
-/* NOTE BADGE */
-.note-text { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 2px; }
+/* ── SETUP ── */
+.step { display:flex; gap:12px; margin-bottom:18px; }
+.sn { width:26px; height:26px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green); color:var(--green); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.sb { flex:1; }
+.st { font-size:13px; font-weight:700; margin-bottom:3px; color:var(--text); }
+.sd { font-size:11px; color:var(--muted); line-height:1.7; }
+.code { background:var(--text); color:#a8ff78; border-radius:var(--rs); padding:10px 12px; font-size:9px; margin-top:8px; overflow-x:auto; white-space:pre; font-family:var(--font-m); max-height:130px; overflow-y:auto; line-height:1.5; }
+.copy-btn { display:inline-flex; align-items:center; gap:5px; margin-top:8px; padding:6px 12px; background:var(--green-bg); border:1px solid var(--green-border); border-radius:var(--rs); color:var(--green); font-size:10px; font-weight:600; cursor:pointer; font-family:var(--font-h); }
+a { color:var(--blue); text-decoration:none; font-weight:600; }
+
+/* ── DIVIDER ── */
+.divider { height:1px; background:var(--border); margin:10px 0; }
+
+/* ── AMOUNT EXACT ── */
+.exact { font-family:var(--font-m); }
+
+/* ── PILL TAG ── */
+.pill { display:inline-flex; align-items:center; background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:3px 10px; font-size:10px; font-weight:600; color:var(--text2); gap:4px; }
 </style>
 </head>
 <body>
-
 <div id="app">
-  <!-- PAGES -->
+
+  <!-- DASHBOARD -->
   <div class="page active" id="pg-dashboard">
-    <div class="pg-header">
-      <div class="pg-title">Dashboard</div>
-      <div class="pg-sub" id="dash-updated">Loading…</div>
+    <div class="ph">
+      <div><div class="pt">Dashboard</div><div class="ps" id="dash-ts">Loading…</div></div>
+      <button class="btn-ghost btn btn-xs" onclick="refreshAll()" style="font-size:12px;padding:6px 12px;width:auto">↻ Refresh</button>
     </div>
-    <div class="page-inner" id="dash-content">
-      <div class="loader"><div class="spin"></div></div>
-    </div>
+    <div class="pi" id="dash-content"><div class="loader"><div class="spin"></div></div></div>
   </div>
 
+  <!-- MONTHLY -->
   <div class="page" id="pg-monthly">
-    <div class="pg-header">
-      <div class="pg-title">Monthly</div>
-      <div class="pg-sub">Tap a month to explore</div>
-    </div>
-    <div class="page-inner" id="monthly-content">
-      <div class="loader"><div class="spin"></div></div>
-    </div>
+    <div class="ph"><div><div class="pt">Monthly</div><div class="ps">Tap a month to explore</div></div></div>
+    <div class="pi" id="monthly-content"><div class="loader"><div class="spin"></div></div></div>
   </div>
 
+  <!-- TRADES -->
   <div class="page" id="pg-trades">
-    <div class="pg-header">
-      <div class="pg-title">Trades</div>
-      <div class="pg-sub" id="trade-month-label">All entries</div>
-    </div>
-    <div class="page-inner">
-      <div class="month-tabs" id="trade-tabs"></div>
+    <div class="ph"><div><div class="pt">Trades</div><div class="ps" id="trade-sub">All entries</div></div></div>
+    <div class="pi">
+      <div class="mt" id="trade-tabs"></div>
       <div id="trades-content"><div class="loader"><div class="spin"></div></div></div>
     </div>
   </div>
 
+  <!-- ADD -->
   <div class="page" id="pg-add">
-    <div class="pg-header">
-      <div class="pg-title">Add Entry</div>
-      <div class="pg-sub">PIN protected</div>
-    </div>
-    <div class="page-inner" id="add-content">
-      <div class="toggle-row">
-        <button class="toggle-btn active" onclick="switchForm('trade')">Trade</button>
-        <button class="toggle-btn" onclick="switchForm('expense')">Expense</button>
-        <button class="toggle-btn" onclick="switchForm('investment')">Investment</button>
-        <button class="toggle-btn" onclick="switchForm('goal')">Goal</button>
+    <div class="ph"><div><div class="pt">Add Entry</div><div class="ps">Anyone can add</div></div></div>
+    <div class="pi">
+      <div class="tr">
+        <button class="tb active" onclick="switchForm('trade',this)">Trade</button>
+        <button class="tb" onclick="switchForm('expense',this)">Expense</button>
+        <button class="tb" onclick="switchForm('invest',this)">Investment</button>
+        <button class="tb" onclick="switchForm('goal',this)">Goal</button>
       </div>
 
-      <!-- TRADE FORM -->
       <div id="form-trade">
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input" type="date" id="t-date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Instrument</label>
-          <select class="form-select" id="t-instrument">
-            <option>SENSEX [PUT]</option>
-            <option>SENSEX [CALL]</option>
-            <option>SENSEX [CALL & PUT]</option>
-            <option>NIFTY [PUT]</option>
-            <option>NIFTY [CALL]</option>
-            <option>NIFTY [CALL & PUT]</option>
-            <option>BANKNIFTY [PUT]</option>
-            <option>BANKNIFTY [CALL]</option>
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="t-date"></div>
+        <div class="fg">
+          <label class="fl">Instrument</label>
+          <select class="fs" id="t-inst" onchange="toggleOther()">
+            <option>SENSEX [PUT]</option><option>SENSEX [CALL]</option><option>SENSEX [CALL &amp; PUT]</option>
+            <option>NIFTY [PUT]</option><option>NIFTY [CALL]</option><option>NIFTY [CALL &amp; PUT]</option>
+            <option>BANKNIFTY [PUT]</option><option>BANKNIFTY [CALL]</option><option>BANKNIFTY [CALL &amp; PUT]</option>
             <option>Other</option>
           </select>
         </div>
-        <div id="t-other-group" class="form-group" style="display:none">
-          <label class="form-label">Instrument name</label>
-          <input class="form-input" type="text" id="t-other-name" placeholder="e.g. FINNIFTY [PUT]">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Outcome</label>
-            <select class="form-select" id="t-outcome">
-              <option value="PROFIT">Profit</option>
-              <option value="LOSS">Loss</option>
-            </select>
+        <div id="t-other-g" class="fg" style="display:none"><label class="fl">Custom Instrument</label><input class="fi" type="text" id="t-other" placeholder="e.g. FINNIFTY [PUT]"></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Outcome</label>
+            <select class="fs" id="t-out"><option value="PROFIT">Profit ↑</option><option value="LOSS">Loss ↓</option></select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input class="form-input" type="number" id="t-amount" placeholder="0">
-          </div>
+          <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="t-amt" placeholder="0" inputmode="numeric"></div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Note (optional)</label>
-          <input class="form-input" type="text" id="t-note" placeholder="e.g. Strong trend day">
-        </div>
-        <button class="btn btn-green" onclick="submitTrade()">Add Trade</button>
+        <div class="fg"><label class="fl">Note (optional)</label><input class="fi" type="text" id="t-note" placeholder="e.g. Strong trend day…"></div>
+        <button class="btn btn-g" onclick="submitTrade()">+ Add Trade</button>
       </div>
 
-      <!-- EXPENSE FORM -->
       <div id="form-expense" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input" type="date" id="e-date">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Category</label>
-            <select class="form-select" id="e-cat">
-              <option>Food</option>
-              <option>Medical</option>
-              <option>Transport</option>
-              <option>EMI</option>
-              <option>Family</option>
-              <option>Entertainment</option>
-              <option>Utilities</option>
-              <option>Other</option>
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="e-date"></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Category</label>
+            <select class="fs" id="e-cat">
+              <option>Food</option><option>Medical</option><option>Transport</option><option>EMI</option>
+              <option>Family</option><option>Entertainment</option><option>Utilities</option><option>Other</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input class="form-input" type="number" id="e-amount" placeholder="0">
-          </div>
+          <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="e-amt" placeholder="0" inputmode="numeric"></div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Description</label>
-          <input class="form-input" type="text" id="e-desc" placeholder="What was this for?">
-        </div>
-        <button class="btn btn-red" onclick="submitExpense()">Add Expense</button>
+        <div class="fg"><label class="fl">Description</label><input class="fi" type="text" id="e-desc" placeholder="What was this for?"></div>
+        <button class="btn btn-r" onclick="submitExpense()">+ Add Expense</button>
       </div>
 
-      <!-- INVESTMENT FORM -->
-      <div id="form-investment" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input" type="date" id="i-date">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Amount Added (₹)</label>
-          <input class="form-input" type="number" id="i-amount" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Source / Note</label>
-          <input class="form-input" type="text" id="i-note" placeholder="e.g. Added from savings">
-        </div>
-        <button class="btn btn-green" onclick="submitInvestment()">Add Investment</button>
+      <div id="form-invest" style="display:none">
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="i-date"></div>
+        <div class="fg"><label class="fl">Amount Added (₹)</label><input class="fi" type="number" id="i-amt" placeholder="0" inputmode="numeric"></div>
+        <div class="fg"><label class="fl">Source / Note</label><input class="fi" type="text" id="i-note" placeholder="e.g. Added from savings"></div>
+        <button class="btn btn-b" onclick="submitInvest()">+ Add Investment</button>
       </div>
 
-      <!-- GOAL FORM -->
       <div id="form-goal" style="display:none">
-        <div class="form-group">
-          <label class="form-label">Goal Name</label>
-          <input class="form-input" type="text" id="g-name" placeholder="e.g. Reach ₹10L portfolio">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Target Amount (₹)</label>
-          <input class="form-input" type="number" id="g-target" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Target Date</label>
-          <input class="form-input" type="date" id="g-date">
-        </div>
-        <button class="btn btn-green" onclick="submitGoal()">Set Goal</button>
+        <div class="fg"><label class="fl">Goal Name</label><input class="fi" type="text" id="g-name" placeholder="e.g. Reach ₹10L portfolio"></div>
+        <div class="fg"><label class="fl">Target Amount (₹)</label><input class="fi" type="number" id="g-target" placeholder="0" inputmode="numeric"></div>
+        <div class="fg"><label class="fl">Target Date</label><input class="fi" type="date" id="g-date"></div>
+        <div class="fg"><label class="fl">Note</label><input class="fi" type="text" id="g-note" placeholder="Why this goal?"></div>
+        <button class="btn btn-g" onclick="submitGoal()">+ Set Goal</button>
       </div>
     </div>
   </div>
 
+  <!-- SETTINGS -->
   <div class="page" id="pg-settings">
-    <div class="pg-header">
-      <div class="pg-title">Setup & Share</div>
-      <div class="pg-sub">Connect Google Sheets backend</div>
-    </div>
-    <div class="page-inner">
-
+    <div class="ph"><div><div class="pt">Setup</div><div class="ps">Connect & share</div></div></div>
+    <div class="pi">
       <div class="card">
-        <div class="card-label">Current API URL</div>
-        <div id="api-url-display" style="font-size:11px;color:var(--muted);word-break:break-all;margin-top:4px;">Not configured</div>
-        <div style="margin-top:12px;">
-          <div class="form-group">
-            <label class="form-label">Paste your Apps Script URL</label>
-            <input class="form-input" type="url" id="api-url-input" placeholder="https://script.google.com/macros/s/...">
-          </div>
-          <button class="btn btn-green" style="margin-bottom:8px" onclick="saveApiUrl()">Save & Test</button>
-          <button class="btn btn-ghost" onclick="importHistory()">Import March–May History</button>
+        <div class="kpi-l" style="margin-bottom:6px">Google Sheets API URL</div>
+        <div id="api-display" style="font-size:10px;color:var(--muted);word-break:break-all;margin-bottom:10px;font-family:var(--font-m)">Not configured — showing demo data</div>
+        <div class="fg"><input class="fi" type="url" id="api-input" placeholder="https://script.google.com/macros/s/…/exec"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-g btn-sm" onclick="saveApi()">Save & Test</button>
+          <button class="btn btn-ghost btn-sm" onclick="importHistory()">Import History</button>
         </div>
       </div>
 
-      <div class="section-label">Setup Guide</div>
-      <div class="setup-card">
-        <div class="setup-step">
-          <div class="step-num">1</div>
-          <div class="step-body">
-            <div class="step-title">Create a Google Sheet</div>
-            <div class="step-desc">Go to <a href="https://sheets.new" target="_blank">sheets.new</a> and create a new spreadsheet. Name it "Groww Tracker".</div>
+      <div class="sl2">Share with anyone</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7">Anyone with this link can <strong style="color:var(--text)">view and add data</strong> — no password needed.</div>
+        <div id="share-url-display" style="font-size:10px;color:var(--blue);word-break:break-all;margin-bottom:10px;font-family:var(--font-m)"></div>
+        <button class="btn btn-ghost" onclick="shareApp()">📤 Share App Link</button>
+      </div>
+
+      <div class="sl2">Setup Guide</div>
+      <div class="card">
+        <div class="step">
+          <div class="sn">1</div>
+          <div class="sb">
+            <div class="st">Create a Google Sheet</div>
+            <div class="sd">Go to <a href="https://sheets.new" target="_blank">sheets.new</a> → name it <strong>Groww Tracker</strong>.</div>
           </div>
         </div>
-        <div class="setup-step">
-          <div class="step-num">2</div>
-          <div class="step-body">
-            <div class="step-title">Open Apps Script</div>
-            <div class="step-desc">In your sheet: Extensions → Apps Script. Delete any existing code and paste this:</div>
-            <div class="code-block" id="apps-script-code">Loading script…</div>
+        <div class="step">
+          <div class="sn">2</div>
+          <div class="sb">
+            <div class="st">Open Apps Script</div>
+            <div class="sd"><strong>Extensions → Apps Script</strong>. Delete existing code, paste this:</div>
+            <div class="code" id="script-box">Loading…</div>
             <div class="copy-btn" onclick="copyScript()">📋 Copy Script</div>
           </div>
         </div>
-        <div class="setup-step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <div class="step-title">Deploy as Web App</div>
-            <div class="step-desc">Click Deploy → New Deployment → Web App. Set "Who has access" to <strong>Anyone</strong>. Copy the URL and paste it above.</div>
+        <div class="step">
+          <div class="sn">3</div>
+          <div class="sb">
+            <div class="st">Deploy as Web App</div>
+            <div class="sd"><strong>Deploy → New Deployment → Web App</strong><br>Execute as: <em>Me</em> · Who has access: <em>Anyone</em><br>Copy the URL → paste it above.</div>
           </div>
         </div>
-        <div class="setup-step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <div class="step-title">Set your PIN</div>
-            <div class="form-row" style="margin-top:8px">
-              <div class="form-group">
-                <input class="form-input" type="password" id="new-pin" placeholder="New PIN" maxlength="4">
-              </div>
-              <button class="btn btn-green btn-sm" onclick="setPin()">Set PIN</button>
-            </div>
+        <div class="step">
+          <div class="sn">4</div>
+          <div class="sb">
+            <div class="st">Host free on GitHub Pages</div>
+            <div class="sd"><a href="https://github.com" target="_blank">github.com</a> → New repo → Upload zip → Settings → Pages → main branch. Share your <code>github.io</code> link.</div>
           </div>
         </div>
-
-        <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
-          <div class="card-label">Share this app</div>
-          <div style="font-size:11px;color:var(--muted);margin:6px 0 10px;line-height:1.6;">Share the URL below with anyone — they can view all data without a PIN. Only you can add/edit entries.</div>
-          <div id="share-url" style="font-size:11px;color:var(--blue);word-break:break-all;"></div>
-          <button class="btn btn-ghost" style="margin-top:10px" onclick="shareApp()">Share App Link</button>
+        <div class="step" style="margin-bottom:0">
+          <div class="sn">5</div>
+          <div class="sb">
+            <div class="st">Install on phone</div>
+            <div class="sd">Open in <strong>Chrome (Android)</strong> or <strong>Safari (iPhone)</strong> → Share → <em>Add to Home Screen</em>.</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <!-- NAV -->
   <nav>
-    <button class="nav-btn active" onclick="showPage('dashboard',this)">
-      <span class="nav-icon">📊</span>
-      <span>Dashboard</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('monthly',this)">
-      <span class="nav-icon">📅</span>
-      <span>Monthly</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('trades',this)">
-      <span class="nav-icon">📈</span>
-      <span>Trades</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('add',this)">
-      <span class="nav-icon">➕</span>
-      <span>Add</span>
-    </button>
-    <button class="nav-btn" onclick="showPage('settings',this)">
-      <span class="nav-icon">⚙️</span>
-      <span>Setup</span>
-    </button>
+    <button class="nb active" onclick="nav('dashboard',this)"><span class="ni">📊</span><span>Dash</span></button>
+    <button class="nb" onclick="nav('monthly',this)"><span class="ni">📅</span><span>Monthly</span></button>
+    <button class="nb" onclick="nav('trades',this)"><span class="ni">📈</span><span>Trades</span></button>
+    <button class="nb" onclick="nav('add',this)"><span class="ni">➕</span><span>Add</span></button>
+    <button class="nb" onclick="nav('settings',this)"><span class="ni">⚙️</span><span>Setup</span></button>
   </nav>
 </div>
-
-<!-- PIN OVERLAY -->
-<div id="pin-overlay" style="display:none">
-  <div class="pin-title">Enter PIN</div>
-  <div class="pin-dots" id="pin-dots">
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-    <div class="pin-dot"></div><div class="pin-dot"></div>
-  </div>
-  <div class="pin-error" id="pin-error"></div>
-  <div class="pin-grid" id="pin-grid"></div>
-  <button class="btn btn-ghost btn-sm" onclick="closePinOverlay()">Cancel</button>
-</div>
-
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// CONFIG & STATE
-// ═══════════════════════════════════════════════
-let API_URL = localStorage.getItem('groww_api_url') || '';
-let PIN = localStorage.getItem('groww_pin') || '1234';
-let pinBuffer = '';
-let pinCallback = null;
-let cachedData = null;
-let lastFetch = 0;
-const CACHE_MS = 30000;
-let currentTradeMonth = 'all';
-
-const APPS_SCRIPT = `function doGet(e) {
-  return handleRequest(e);
-}
-function doPost(e) {
-  return handleRequest(e);
-}
-function handleRequest(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var params = e.parameter;
-  var action = params.action || (e.postData ? JSON.parse(e.postData.contents).action : '');
+// ── APPS SCRIPT ─────────────────────────────────────
+const APPS_SCRIPT = `function doGet(e) { return handle(e); }
+function doPost(e) { return handle(e); }
+function handle(e) {
+  var params = e.parameter || {};
   var body = {};
-  try {
-    if (e.postData) body = JSON.parse(e.postData.contents);
-  } catch(err) {}
-
-  var result;
-  if (action === 'read') {
-    result = readAll(ss);
-  } else if (action === 'addTrade') {
-    result = addRow(ss, 'Trades', [body.date, body.instrument, body.outcome, body.amount, body.note || '']);
-  } else if (action === 'addExpense') {
-    result = addRow(ss, 'Expenses', [body.date, body.category, body.amount, body.description]);
-  } else if (action === 'addInvestment') {
-    result = addRow(ss, 'Investments', [body.date, body.amount, body.note]);
-  } else if (action === 'addGoal') {
-    result = addRow(ss, 'Goals', [body.name, body.target, body.date]);
-  } else if (action === 'deleteRow') {
-    result = deleteRow(ss, body.sheet, body.rowIndex);
-  } else {
-    result = {error: 'Unknown action'};
-  }
-  return ContentService.createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
+  try { if (e.postData) body = JSON.parse(e.postData.contents); } catch(x) {}
+  var action = params.action || body.action || 'read';
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var out;
+  if      (action==='read')           out = readAll(ss);
+  else if (action==='addTrade')       out = addRow(ss,'Trades',      [body.date,body.instrument,body.outcome,Number(body.amount),body.note||'']);
+  else if (action==='addExpense')     out = addRow(ss,'Expenses',    [body.date,body.category,Number(body.amount),body.description||'']);
+  else if (action==='addInvestment')  out = addRow(ss,'Investments', [body.date,Number(body.amount),body.note||'']);
+  else if (action==='addGoal')        out = addRow(ss,'Goals',       [body.name,Number(body.target),body.date||'',body.note||'']);
+  else if (action==='deleteRow')      out = delRow(ss,body.sheet,Number(body.rowIndex));
+  else out = {error:'Unknown action'};
+  var resp = ContentService.createTextOutput(JSON.stringify(out));
+  resp.setMimeType(ContentService.MimeType.JSON);
+  return resp;
 }
-function ensureSheet(ss, name, headers) {
-  var sh = ss.getSheetByName(name);
-  if (!sh) {
-    sh = ss.insertSheet(name);
-    sh.appendRow(headers);
-  }
+function ensure(ss,name,headers){
+  var sh=ss.getSheetByName(name);
+  if(!sh){sh=ss.insertSheet(name);sh.appendRow(headers);}
   return sh;
 }
-function readAll(ss) {
-  var trades = sheetData(ss, 'Trades', ['Date','Instrument','Outcome','Amount','Note']);
-  var expenses = sheetData(ss, 'Expenses', ['Date','Category','Amount','Description']);
-  var investments = sheetData(ss, 'Investments', ['Date','Amount','Note']);
-  var goals = sheetData(ss, 'Goals', ['Name','Target','Date']);
-  return {trades:trades, expenses:expenses, investments:investments, goals:goals};
+function readAll(ss){
+  return {
+    trades:      rows(ss,'Trades',      ['Date','Instrument','Outcome','Amount','Note']),
+    expenses:    rows(ss,'Expenses',    ['Date','Category','Amount','Description']),
+    investments: rows(ss,'Investments', ['Date','Amount','Note']),
+    goals:       rows(ss,'Goals',       ['Name','Target','Date','Note'])
+  };
 }
-function sheetData(ss, name, headers) {
-  var sh = ensureSheet(ss, name, headers);
-  var vals = sh.getDataRange().getValues();
-  if (vals.length <= 1) return [];
-  var rows = [];
-  for (var i = 1; i < vals.length; i++) {
-    var r = {};
-    for (var j = 0; j < headers.length; j++) r[headers[j]] = vals[i][j];
-    r._rowIndex = i + 1;
-    rows.push(r);
-  }
-  return rows;
+function rows(ss,name,headers){
+  var sh=ensure(ss,name,headers);
+  var data=sh.getDataRange().getValues();
+  if(data.length<=1) return [];
+  return data.slice(1).map(function(r,i){
+    var obj={_row:i+2};
+    headers.forEach(function(h,j){obj[h]=r[j];});
+    return obj;
+  });
 }
-function addRow(ss, sheetName, values) {
-  var headers = {
+function addRow(ss,name,vals){
+  var hmap={
     Trades:['Date','Instrument','Outcome','Amount','Note'],
     Expenses:['Date','Category','Amount','Description'],
     Investments:['Date','Amount','Note'],
-    Goals:['Name','Target','Date']
+    Goals:['Name','Target','Date','Note']
   };
-  var sh = ensureSheet(ss, sheetName, headers[sheetName]);
-  sh.appendRow(values);
-  return {success: true};
+  ensure(ss,name,hmap[name]).appendRow(vals);
+  return {ok:true};
 }
-function deleteRow(ss, sheetName, rowIndex) {
-  var sh = ss.getSheetByName(sheetName);
-  if (sh && rowIndex > 1) { sh.deleteRow(rowIndex); return {success:true}; }
-  return {error:'Not found'};
+function delRow(ss,name,rowIndex){
+  var sh=ss.getSheetByName(name);
+  if(sh&&rowIndex>1){sh.deleteRow(rowIndex);return{ok:true};}
+  return{error:'Not found'};
 }`;
 
-// ═══════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════
-function showPage(name, btn) {
+// ── STATE ────────────────────────────────────────────
+let API = localStorage.getItem('g_api') || '';
+let cache = null, lastFetch = 0;
+const CACHE_MS = 20000;
+let tradeMonth = 'all';
+
+// ── NAV ─────────────────────────────────────────────
+function nav(page, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('pg-' + name).classList.add('active');
-  if (btn) btn.classList.add('active');
-
-  if (name === 'dashboard') renderDashboard();
-  else if (name === 'monthly') renderMonthly();
-  else if (name === 'trades') renderTrades();
-  else if (name === 'add') {
-    requirePin(openAddPage);
-  }
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('pg-'+page).classList.add('active');
+  btn.classList.add('active');
+  if (page==='dashboard') renderDash();
+  else if (page==='monthly') renderMonthly();
+  else if (page==='trades') renderTrades();
+  else if (page==='add') initAddForms();
+  else if (page==='settings') initSettings();
 }
 
-// ═══════════════════════════════════════════════
-// PIN
-// ═══════════════════════════════════════════════
-function requirePin(callback) {
-  pinCallback = callback;
-  pinBuffer = '';
-  renderPinDots();
-  document.getElementById('pin-error').textContent = '';
-  document.getElementById('pin-overlay').style.display = 'flex';
-}
-function closePinOverlay() {
-  document.getElementById('pin-overlay').style.display = 'none';
-  pinBuffer = '';
-  pinCallback = null;
-  // go back to dashboard if cancelled from add page
-  const addBtn = document.querySelectorAll('.nav-btn')[3];
-  showPage('dashboard', document.querySelectorAll('.nav-btn')[0]);
-}
-function renderPinDots() {
-  const dots = document.querySelectorAll('.pin-dot');
-  dots.forEach((d, i) => d.classList.toggle('filled', i < pinBuffer.length));
-}
-function pinKey(k) {
-  if (k === 'del') { pinBuffer = pinBuffer.slice(0,-1); renderPinDots(); return; }
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += k;
-  renderPinDots();
-  if (pinBuffer.length === 4) {
-    if (pinBuffer === PIN) {
-      document.getElementById('pin-overlay').style.display = 'none';
-      if (pinCallback) { pinCallback(); pinCallback = null; }
-    } else {
-      document.getElementById('pin-error').textContent = 'Wrong PIN';
-      setTimeout(() => { pinBuffer = ''; renderPinDots(); document.getElementById('pin-error').textContent=''; }, 700);
-    }
-  }
-}
-function buildPinGrid() {
-  const g = document.getElementById('pin-grid');
-  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
-  g.innerHTML = keys.map(k => k === ''
-    ? `<div></div>`
-    : `<div class="pin-key" onclick="pinKey('${k==='⌫'?'del':k}')">${k}</div>`
-  ).join('');
-}
-function openAddPage() {
-  const today = new Date().toISOString().split('T')[0];
-  ['t-date','e-date','i-date'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = today;
-  });
-}
-function setPin() {
-  const v = document.getElementById('new-pin').value;
-  if (v.length !== 4 || isNaN(v)) { toast('PIN must be 4 digits'); return; }
-  PIN = v; localStorage.setItem('groww_pin', v);
-  toast('PIN updated ✓');
-  document.getElementById('new-pin').value = '';
+// ── FORMAT ───────────────────────────────────────────
+// Always show exact full rupee amount with commas
+const fmt = n => '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+const fmtSigned = n => (n<0?'-':'') + fmt(n);
+// Short form for hero only
+function fmtS(n) {
+  const a = Math.abs(Math.round(n));
+  if (a >= 1e7) return (n<0?'-':'') + '₹'+(a/1e7).toFixed(2)+'Cr';
+  if (a >= 1e5) return (n<0?'-':'') + '₹'+(a/1e5).toFixed(2)+'L';
+  if (a >= 1000) return (n<0?'-':'') + '₹'+(a/1000).toFixed(1)+'k';
+  return (n<0?'-':'') + '₹'+a;
 }
 
-// ═══════════════════════════════════════════════
-// API
-// ═══════════════════════════════════════════════
-async function api(action, body = {}) {
-  if (!API_URL) { toast('No API URL set — go to Setup tab'); throw new Error('no api'); }
-  const payload = { action, ...body };
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: { 'Content-Type': 'text/plain' }
-  });
-  return res.json();
+const mkey = s => { const d=new Date(s); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
+const mlabel = k => { const [y,m]=k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+y; };
+const pnl = t => { const a=parseFloat(t.Amount)||0; return t.Outcome==='LOSS'?-Math.abs(a):Math.abs(a); };
+
+function byMonth(items, dk='Date') {
+  const g={};
+  items.forEach(i=>{ const k=mkey(i[dk]); (g[k]=g[k]||[]).push(i); });
+  return g;
 }
 
-async function fetchData(force = false) {
-  const now = Date.now();
-  if (!force && cachedData && (now - lastFetch < CACHE_MS)) return cachedData;
-  if (!API_URL) return getDemoData();
+function toast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+function refreshAll() { cache=null; renderDash(); toast('Refreshed ↻'); }
+
+// ── DATA ─────────────────────────────────────────────
+async function fetchData(force=false) {
+  if (!force && cache && Date.now()-lastFetch < CACHE_MS) return cache;
+  if (!API) return demo();
   try {
-    const data = await api('read');
-    cachedData = data;
-    lastFetch = now;
-    return data;
-  } catch (e) {
-    return cachedData || getDemoData();
-  }
+    const r = await fetch(API+'?action=read&t='+Date.now());
+    const d = await r.json();
+    if (d && d.trades) { cache=d; lastFetch=Date.now(); return d; }
+    throw new Error('bad data');
+  } catch(e) { return cache || demo(); }
 }
 
-function getDemoData() {
-  const trades = [
-    {Date:'2026-03-12',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:2665,Note:''},
-    {Date:'2026-03-16',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:392,Note:''},
-    {Date:'2026-03-17',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:1148,Note:''},
-    {Date:'2026-03-18',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:1373,Note:''},
-    {Date:'2026-03-19',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:11529,Note:''},
-    {Date:'2026-03-23',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:3692,Note:''},
-    {Date:'2026-03-24',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:16830,Note:''},
-    {Date:'2026-03-25',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:14414,Note:''},
-    {Date:'2026-03-27',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:4421,Note:''},
-    {Date:'2026-03-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:8962,Note:''},
-    {Date:'2026-04-01',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:13156,Note:''},
-    {Date:'2026-04-02',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:116997,Note:'Big move day'},
-    {Date:'2026-04-06',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:4695,Note:''},
-    {Date:'2026-04-07',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',Amount:4429,Note:''},
-    {Date:'2026-04-08',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:3307,Note:''},
-    {Date:'2026-04-09',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:29853,Note:''},
-    {Date:'2026-04-10',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:349,Note:''},
-    {Date:'2026-04-13',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',Amount:2994,Note:''},
-    {Date:'2026-04-15',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:4263,Note:''},
-    {Date:'2026-04-16',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:6989,Note:''},
-    {Date:'2026-04-17',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:8672,Note:''},
-    {Date:'2026-04-20',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:9060,Note:''},
-    {Date:'2026-04-21',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:827,Note:''},
-    {Date:'2026-04-22',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:16528,Note:''},
-    {Date:'2026-04-23',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:7535,Note:''},
-    {Date:'2026-04-24',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:267,Note:''},
-    {Date:'2026-04-29',Instrument:'SENSEX [PUT]',Outcome:'LOSS',Amount:35691,Note:'Bad day'},
-    {Date:'2026-04-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:10525,Note:''},
-    {Date:'2026-05-04',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:1052,Note:''},
-    {Date:'2026-05-05',Instrument:'NIFTY [CALL & PUT]',Outcome:'PROFIT',Amount:6645,Note:''},
-  ];
-  const expenses = [
-    {Date:'2026-03-20',Category:'Family',Amount:1000,Description:'For My Bday'},
-    {Date:'2026-03-23',Category:'Other',Amount:100,Description:'Expenses'},
-    {Date:'2026-03-24',Category:'Family',Amount:900,Description:'Ranjith expenses'},
-    {Date:'2026-03-27',Category:'Food',Amount:400,Description:'Thursday food'},
-    {Date:'2026-03-27',Category:'Food',Amount:4000,Description:'Sat and sun expenses'},
-    {Date:'2026-03-30',Category:'Food',Amount:1000,Description:'Visakan toy and mutton'},
-    {Date:'2026-03-30',Category:'Other',Amount:2000,Description:'House expenses (Nuts)'},
-    {Date:'2026-04-02',Category:'Food',Amount:698,Description:'Sat and sunday'},
-    {Date:'2026-04-10',Category:'Entertainment',Amount:15000,Description:'Trip'},
-    {Date:'2026-04-14',Category:'Other',Amount:30300,Description:'Phone 25k + Raj credit card 5300'},
-    {Date:'2026-04-14',Category:'Family',Amount:100,Description:'Raj'},
-    {Date:'2026-04-15',Category:'Food',Amount:900,Description:'Mutton'},
-    {Date:'2026-04-16',Category:'EMI',Amount:4555,Description:'Car EMI'},
-    {Date:'2026-04-16',Category:'Medical',Amount:516,Description:'Visakan Hospital and snack'},
-    {Date:'2026-04-18',Category:'Medical',Amount:2200,Description:'Hospital + Raj + food + car emi'},
-    {Date:'2026-04-19',Category:'Food',Amount:1000,Description:'Sunday'},
-    {Date:'2026-04-22',Category:'Other',Amount:1000,Description:'Home expenses'},
-    {Date:'2026-04-24',Category:'Family',Amount:10000,Description:'Raj'},
-    {Date:'2026-04-25',Category:'Medical',Amount:700,Description:'Raj amma hospital'},
-    {Date:'2026-04-24',Category:'Other',Amount:150,Description:'Raj mobile'},
-    {Date:'2026-04-26',Category:'Transport',Amount:200,Description:'Raj bike petrol'},
-    {Date:'2026-04-27',Category:'Medical',Amount:200,Description:'Visakan hospital'},
-    {Date:'2026-04-27',Category:'Transport',Amount:400,Description:'Nisha petrol'},
-    {Date:'2026-04-30',Category:'Transport',Amount:4000,Description:'Raj bike service'},
-  ];
-  const investments = [
-    {Date:'2026-03-01',Amount:184000,Note:'Initial capital'},
-    {Date:'2026-04-17',Amount:100000,Note:'Added from father'},
-  ];
-  const goals = [
-    {Name:'Reach ₹5L portfolio',Target:500000,Date:'2026-12-31'},
-  ];
-  return {trades, expenses, investments, goals};
+async function apiPost(body) {
+  if (!API) { toast('Connect Google Sheets in Setup first'); return null; }
+  try {
+    const r = await fetch(API, { method:'POST', body:JSON.stringify(body), headers:{'Content-Type':'text/plain'} });
+    const d = await r.json();
+    if (d.ok) cache=null;
+    return d;
+  } catch(e) { toast('Network error — try again'); return null; }
 }
 
-// ═══════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════
-function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
-function fmtShort(n) {
-  n = Math.round(n);
-  if (Math.abs(n) >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
-  if (Math.abs(n) >= 1000) return '₹' + (n/1000).toFixed(1) + 'k';
-  return '₹' + n;
-}
-function getMonthKey(dateStr) {
-  const d = new Date(dateStr);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-}
-function getMonthLabel(key) {
-  const [y, m] = key.split('-');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[parseInt(m)-1] + ' ' + y;
-}
-function tradeAmount(t) {
-  const amt = parseFloat(t.Amount) || 0;
-  return t.Outcome === 'LOSS' ? -Math.abs(amt) : Math.abs(amt);
+// ── DEMO DATA (exact from Excel) ─────────────────────
+function demo() {
+  return {
+    trades:[
+      // MARCH — Gross: ₹65,426, All PROFIT (10 trades, 10W 0L)
+      {Date:'2026-03-12',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:2665,  Note:''},
+      {Date:'2026-03-16',Instrument:'SENSEX [CALL]',     Outcome:'PROFIT',Amount:392,   Note:''},
+      {Date:'2026-03-17',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:1148,  Note:''},
+      {Date:'2026-03-18',Instrument:'SENSEX [CALL]',     Outcome:'PROFIT',Amount:1373,  Note:''},
+      {Date:'2026-03-19',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:11529, Note:''},
+      {Date:'2026-03-23',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:3692,  Note:''},
+      {Date:'2026-03-24',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:16830, Note:'Best day March'},
+      {Date:'2026-03-25',Instrument:'SENSEX [CALL]',     Outcome:'PROFIT',Amount:14414, Note:''},
+      {Date:'2026-03-27',Instrument:'SENSEX [PUT]',      Outcome:'PROFIT',Amount:4421,  Note:''},
+      {Date:'2026-03-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:8962, Note:''},
+      // APRIL — Gross: ₹1,89,909 (18 trades: 15W 3L)
+      {Date:'2026-04-01',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:13156,  Note:''},
+      {Date:'2026-04-02',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:116997, Note:'Massive global selloff day'},
+      {Date:'2026-04-06',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:4695,   Note:''},
+      {Date:'2026-04-07',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',  Amount:4429,   Note:'Fakeout'},
+      {Date:'2026-04-08',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:3307,   Note:''},
+      {Date:'2026-04-09',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:29853,  Note:''},
+      {Date:'2026-04-10',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:349,    Note:'Scratch'},
+      {Date:'2026-04-13',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',  Amount:2994,   Note:'Overtraded'},
+      {Date:'2026-04-15',Instrument:'SENSEX [PUT]',       Outcome:'PROFIT',Amount:4263,   Note:''},
+      {Date:'2026-04-16',Instrument:'SENSEX [PUT]',       Outcome:'PROFIT',Amount:6989,   Note:''},
+      {Date:'2026-04-17',Instrument:'SENSEX [CALL]',      Outcome:'PROFIT',Amount:8672,   Note:''},
+      {Date:'2026-04-20',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:9060,   Note:''},
+      {Date:'2026-04-21',Instrument:'SENSEX [CALL]',      Outcome:'PROFIT',Amount:827,    Note:''},
+      {Date:'2026-04-22',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:16528,  Note:''},
+      {Date:'2026-04-23',Instrument:'SENSEX [CALL]',      Outcome:'PROFIT',Amount:7535,   Note:''},
+      {Date:'2026-04-24',Instrument:'SENSEX [PUT]',       Outcome:'PROFIT',Amount:267,    Note:''},
+      {Date:'2026-04-29',Instrument:'SENSEX [PUT]',       Outcome:'LOSS',  Amount:35691,  Note:'Held too long'},
+      {Date:'2026-04-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:10525,  Note:''},
+      // MAY — Gross: ₹7,697 (2 trades: 2W 0L)
+      {Date:'2026-05-04',Instrument:'SENSEX [PUT]',        Outcome:'PROFIT',Amount:1052, Note:''},
+      {Date:'2026-05-05',Instrument:'NIFTY [CALL & PUT]',  Outcome:'PROFIT',Amount:6645, Note:''},
+    ],
+    expenses:[
+      // MARCH — Total: ₹9,400
+      {Date:'2026-03-20',Category:'Family',       Amount:1000, Description:'Birthday'},
+      {Date:'2026-03-23',Category:'Other',         Amount:100,  Description:'Expenses'},
+      {Date:'2026-03-24',Category:'Family',        Amount:900,  Description:'Ranjith expenses'},
+      {Date:'2026-03-27',Category:'Food',          Amount:400,  Description:'Thursday food'},
+      {Date:'2026-03-27',Category:'Food',          Amount:4000, Description:'Sat & Sun expenses'},
+      {Date:'2026-03-30',Category:'Food',          Amount:1000, Description:'Visakan toy + mutton'},
+      {Date:'2026-03-30',Category:'Other',         Amount:2000, Description:'House expenses (Nuts)'},
+      // APRIL — Total: ₹71,919
+      {Date:'2026-04-02',Category:'Food',          Amount:698,  Description:'Sat & Sunday'},
+      {Date:'2026-04-10',Category:'Entertainment', Amount:15000,Description:'Trip'},
+      {Date:'2026-04-14',Category:'Other',         Amount:30300,Description:'Phone ₹25k + Raj CC ₹5,300'},
+      {Date:'2026-04-14',Category:'Family',        Amount:100,  Description:'Raj'},
+      {Date:'2026-04-15',Category:'Food',          Amount:900,  Description:'Mutton'},
+      {Date:'2026-04-16',Category:'EMI',           Amount:4555, Description:'Car EMI'},
+      {Date:'2026-04-16',Category:'Medical',       Amount:516,  Description:'Visakan hospital + snack'},
+      {Date:'2026-04-18',Category:'Medical',       Amount:2200, Description:'Hospital + Raj + food + car EMI'},
+      {Date:'2026-04-19',Category:'Food',          Amount:1000, Description:'Sunday'},
+      {Date:'2026-04-22',Category:'Other',         Amount:1000, Description:'Home expenses'},
+      {Date:'2026-04-24',Category:'Family',        Amount:10000,Description:'Raj'},
+      {Date:'2026-04-25',Category:'Medical',       Amount:700,  Description:'Raj amma hospital'},
+      {Date:'2026-04-24',Category:'Other',         Amount:150,  Description:'Raj mobile'},
+      {Date:'2026-04-26',Category:'Transport',     Amount:200,  Description:'Raj bike petrol'},
+      {Date:'2026-04-27',Category:'Medical',       Amount:200,  Description:'Visakan hospital'},
+      {Date:'2026-04-27',Category:'Transport',     Amount:400,  Description:'Nisha petrol'},
+      {Date:'2026-04-30',Category:'Transport',     Amount:4000, Description:'Raj bike service'},
+    ],
+    investments:[
+      {Date:'2026-03-01',Amount:184000,Note:'Initial capital'},
+      {Date:'2026-04-17',Amount:100000,Note:'Added from father'},
+    ],
+    goals:[
+      {Name:'Reach ₹5L portfolio', Target:500000, Date:'2026-12-31', Note:'Year-end target'},
+      {Name:'₹1L single-month profit', Target:100000, Date:'2026-06-30', Note:''},
+    ]
+  };
 }
 
-function groupByMonth(items, dateKey='Date') {
-  const groups = {};
-  items.forEach(item => {
-    const key = getMonthKey(item[dateKey]);
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(item);
+// Verify: March gross = 2665+392+1148+1373+11529+3692+16830+14414+4421+8962 = 65426 ✓
+// Verify: April gross = 13156+116997+4695-4429+3307+29853+349-2994+4263+6989+8672+9060+827+16528+7535+267-35691+10525 = 189909 ✓
+// Verify: April exp   = 698+15000+30300+100+900+4555+516+2200+1000+1000+10000+700+150+200+200+400+4000 = 71919 ✓
+// Verify: March exp   = 1000+100+900+400+4000+1000+2000 = 9400 ✓
+
+// ── DASHBOARD ────────────────────────────────────────
+async function renderDash() {
+  const d = await fetchData();
+
+  const inv   = d.investments.reduce((s,i)=>s+(parseFloat(i.Amount)||0),0);   // 284000
+  const gross = d.trades.reduce((s,t)=>s+pnl(t),0);                           // 263032
+  const exp   = d.expenses.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);       // 81319
+  const net   = gross - exp;                                                    // 181713
+  const bal   = inv + net;                                                      // 465713
+  const wins  = d.trades.filter(t=>t.Outcome==='PROFIT').length;
+  const losses= d.trades.filter(t=>t.Outcome==='LOSS').length;
+  const wr    = d.trades.length ? Math.round(wins/d.trades.length*100) : 0;
+
+  const trByM = byMonth(d.trades), exByM = byMonth(d.expenses);
+  const months = [...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort();
+
+  const mRows = months.map(m=>{
+    const ts=trByM[m]||[], es=exByM[m]||[];
+    const mg=ts.reduce((s,t)=>s+pnl(t),0);
+    const me=es.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);
+    return {key:m, label:mlabel(m), mg, me, mn:mg-me};
   });
-  return groups;
-}
+  const maxAll = Math.max(...mRows.map(r=>Math.max(r.mg,r.me)),1);
 
-// ═══════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════
-async function renderDashboard() {
-  const data = await fetchData();
-  const el = document.getElementById('dash-content');
+  const bestM = mRows.reduce((a,b)=>b.mn>a.mn?b:a, mRows[0]||{mn:0,label:'—'});
+  const bestT = d.trades.reduce((a,t)=>pnl(t)>pnl(a)?t:a, d.trades[0]||{Amount:0});
+  const streak = calcStreak(d.trades);
+  const roi = inv>0?((net/inv)*100).toFixed(1):0;
 
-  const totalInvested = data.investments.reduce((s,i) => s + (parseFloat(i.Amount)||0), 0);
-  const totalTradeProfit = data.trades.reduce((s,t) => s + tradeAmount(t), 0);
-  const totalExpenses = data.expenses.reduce((s,e) => s + (parseFloat(e.Amount)||0), 0);
-  const netBalance = totalInvested + totalTradeProfit - totalExpenses;
-  const totalProfit = totalTradeProfit - totalExpenses;
-  const growth = totalInvested > 0 ? (totalProfit / totalInvested * 100) : 0;
-
-  // By month
-  const tradesByMonth = groupByMonth(data.trades);
-  const expByMonth = groupByMonth(data.expenses);
-  const months = [...new Set([...Object.keys(tradesByMonth), ...Object.keys(expByMonth)])].sort();
-
-  const monthRows = months.map(m => {
-    const trades = tradesByMonth[m] || [];
-    const exps = expByMonth[m] || [];
-    const gp = trades.reduce((s,t) => s + tradeAmount(t), 0);
-    const exp = exps.reduce((s,e) => s + (parseFloat(e.Amount)||0), 0);
-    return { label: getMonthLabel(m), gp, exp, net: gp - exp };
-  });
-
-  const maxBar = Math.max(...monthRows.map(r => Math.abs(r.gp)), 1);
-
-  // Best month
-  const bestMonth = monthRows.reduce((a,b) => b.net > a.net ? b : a, monthRows[0] || {net:0,label:'—'});
-
-  el.innerHTML = `
-    <div class="card bg-${totalProfit >= 0 ? 'green' : 'red'}" style="text-align:center;padding:20px">
-      <div class="card-label">Net Portfolio Value</div>
-      <div class="card-value c-${totalProfit >= 0 ? 'green' : 'red'}" style="font-size:34px">${fmt(netBalance)}</div>
-      <div class="card-sub">${growth >= 0 ? '▲' : '▼'} ${Math.abs(growth).toFixed(1)}% overall return</div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-label">Total Invested</div>
-        <div class="kpi-val c-blue">${fmtShort(totalInvested)}</div>
-        <div class="kpi-change c-muted">${data.investments.length} deposits</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Gross Profit</div>
-        <div class="kpi-val c-green">${fmtShort(totalTradeProfit)}</div>
-        <div class="kpi-change c-muted">${data.trades.length} trades</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Total Expenses</div>
-        <div class="kpi-val c-red">${fmtShort(totalExpenses)}</div>
-        <div class="kpi-change c-muted">${data.expenses.length} entries</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Net Profit</div>
-        <div class="kpi-val c-${totalProfit>=0?'gold':'red'}">${fmtShort(totalProfit)}</div>
-        <div class="kpi-change c-muted">after expenses</div>
+  document.getElementById('dash-content').innerHTML = `
+    <div class="hero">
+      <div class="hero-label">Total Portfolio Value</div>
+      <div class="hero-val">${fmt(bal)}</div>
+      <div class="hero-sub">${net>=0?'▲':'▼'} ${fmt(net)} net profit · ${roi}% ROI on capital</div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:center">
+        <div class="hero-badge">📈 ${d.trades.length} trades</div>
+        <div class="hero-badge">${wr}% win rate</div>
       </div>
     </div>
 
-    <div class="mini-stats">
-      <div class="mini-stat">
-        <div class="mini-stat-val c-green">${data.trades.filter(t=>t.Outcome==='PROFIT').length}</div>
-        <div class="mini-stat-label">Wins</div>
+    <div class="kg">
+      <div class="kpi">
+        <div class="kpi-l">Total Invested</div>
+        <div class="kpi-v cb exact">${fmt(inv)}</div>
+        <div class="kpi-s">${d.investments.length} deposits</div>
       </div>
-      <div class="mini-stat">
-        <div class="mini-stat-val c-red">${data.trades.filter(t=>t.Outcome==='LOSS').length}</div>
-        <div class="mini-stat-label">Losses</div>
+      <div class="kpi">
+        <div class="kpi-l">Gross Profit</div>
+        <div class="kpi-v cg exact">${fmt(gross)}</div>
+        <div class="kpi-s">${d.trades.length} trades total</div>
       </div>
-      <div class="mini-stat">
-        <div class="mini-stat-val c-purple">${data.trades.length > 0 ? Math.round(data.trades.filter(t=>t.Outcome==='PROFIT').length/data.trades.length*100) : 0}%</div>
-        <div class="mini-stat-label">Win Rate</div>
+      <div class="kpi">
+        <div class="kpi-l">Total Expenses</div>
+        <div class="kpi-v cr exact">${fmt(exp)}</div>
+        <div class="kpi-s">${d.expenses.length} entries</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-l">Net Profit</div>
+        <div class="kpi-v ${net>=0?'cg':'cr'} exact">${fmt(net)}</div>
+        <div class="kpi-s">gross − expenses</div>
       </div>
     </div>
 
-    <div class="section-label">Monthly Profit</div>
+    <div class="sr">
+      <div class="sc"><div class="sv cg">${wins}</div><div class="sl">Wins</div></div>
+      <div class="sc"><div class="sv cr">${losses}</div><div class="sl">Losses</div></div>
+      <div class="sc"><div class="sv cp">${wr}%</div><div class="sl">Win Rate</div></div>
+    </div>
+
+    ${streak>1?`<div class="insight"><strong>🔥 ${streak}-trade win streak</strong> — great momentum, stay disciplined.</div>`:''}
+    ${bestM.mn>0?`<div class="insight"><strong>📅 Best month: ${bestM.label}</strong> — net profit ${fmt(bestM.mn)} after all expenses.</div>`:''}
+    ${bestT.Amount?`<div class="insight"><strong>💥 All-time best trade: ${fmt(pnl(bestT))}</strong> on ${bestT.Instrument}${bestT.Note?' — "'+bestT.Note+'"':''}.</div>`:''}
+
+    <div class="sl2">Monthly Summary — Exact Figures</div>
     <div class="card">
-      <div class="bar-chart">
-        ${monthRows.map(r => `
-          <div class="bar-row">
-            <div class="bar-label">${r.label.split(' ')[0]}</div>
-            <div class="bar-track">
-              <div class="bar-fill" style="width:${Math.abs(r.gp)/maxBar*100}%;background:${r.gp>=0?'var(--green)':'var(--red)'}"></div>
-            </div>
-            <div class="bar-num c-${r.gp>=0?'green':'red'}">${fmtShort(r.gp)}</div>
+      ${mRows.map(r=>`
+        <div class="sum-row">
+          <div>
+            <div class="sum-label">${r.label}</div>
+            <div class="sum-sub">Profit <span class="cg exact" style="font-family:var(--font-m)">${fmt(r.mg)}</span> · Exp <span class="cr exact" style="font-family:var(--font-m)">${fmt(r.me)}</span></div>
           </div>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="section-label">Monthly Expenses vs Profit</div>
-    <div class="card">
-      ${monthRows.map(r => `
-        <div style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:12px">${r.label}</span>
-            <span style="font-size:11px;color:var(--muted)">Net: <span class="c-${r.net>=0?'green':'red'}">${fmtShort(r.net)}</span></span>
+          <div style="text-align:right">
+            <div class="sum-val ${r.mn>=0?'cg':'cr'} exact">${r.mn>=0?'+':'−'}${fmt(r.mn)}</div>
+            <div style="font-size:9px;color:var(--muted)">net</div>
           </div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <div style="font-size:10px;color:var(--green);width:36px">P</div>
-            <div class="bar-track" style="flex:1">
-              <div class="bar-fill" style="width:${Math.abs(r.gp)/maxBar*100}%;background:var(--green)"></div>
-            </div>
-            <div style="font-size:10px;color:var(--green);width:52px;text-align:right">${fmtShort(r.gp)}</div>
-          </div>
-          <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
-            <div style="font-size:10px;color:var(--red);width:36px">E</div>
-            <div class="bar-track" style="flex:1">
-              <div class="bar-fill" style="width:${r.exp/maxBar*100}%;background:var(--red)"></div>
-            </div>
-            <div style="font-size:10px;color:var(--red);width:52px;text-align:right">${fmtShort(r.exp)}</div>
-          </div>
+        </div>`).join('')}
+      <div class="sum-row" style="background:var(--green-bg);margin:-14px -14px -14px;padding:12px 14px;border-radius:0 0 var(--r) var(--r);border-top:1px solid var(--green-border)">
+        <div><div class="sum-label" style="color:var(--green)">OVERALL TOTAL</div></div>
+        <div style="text-align:right">
+          <div class="sum-val cg exact">${fmt(net)}</div>
+          <div style="font-size:9px;color:var(--green)">net profit</div>
         </div>
-      `).join('')}
+      </div>
     </div>
 
-    ${data.goals && data.goals.length ? `
-    <div class="section-label">Goals</div>
-    ${data.goals.map(g => {
-      const pct = Math.min(netBalance / (parseFloat(g.Target)||1) * 100, 100);
+    <div class="sl2">Profit vs Expenses by Month</div>
+    <div class="card">
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--green)"><div style="width:10px;height:4px;border-radius:2px;background:var(--green)"></div>Profit</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--red)"><div style="width:10px;height:4px;border-radius:2px;background:var(--red)"></div>Expense</div>
+      </div>
+      ${mRows.map(r=>`
+        <div class="dbar-row">
+          <div class="dbar-top">
+            <span style="font-size:12px;font-weight:600">${r.label}</span>
+            <span class="${r.mn>=0?'cg':'cr'}" style="font-family:var(--font-m);font-size:11px">${r.mn>=0?'+':'−'}${fmt(r.mn)} net</span>
+          </div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:${r.mg/maxAll*100}%;background:var(--green)"></div></div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:${r.me/maxAll*100}%;background:var(--red)"></div></div>
+          <div class="dbar-sub">
+            <span style="color:var(--green);font-family:var(--font-m);font-size:10px">${fmt(r.mg)}</span>
+            <span style="color:var(--red);font-family:var(--font-m);font-size:10px">${fmt(r.me)}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    ${d.goals&&d.goals.length?`
+    <div class="sl2">Goals</div>
+    ${d.goals.map(g=>{
+      const target=parseFloat(g.Target)||1;
+      const pct=Math.min(Math.round(bal/target*100),100);
+      const dLeft = g.Date?Math.ceil((new Date(g.Date)-new Date())/86400000):null;
       return `<div class="card">
-        <div style="display:flex;justify-content:space-between">
-          <div style="font-size:13px">${g.Name}</div>
-          <div style="font-size:12px;color:var(--muted)">${Math.round(pct)}%</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+          <div>
+            <div style="font-size:13px;font-weight:700">${g.Name}</div>
+            ${g.Note?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${g.Note}</div>`:''}
+          </div>
+          <span class="badge ${pct>=100?'b-green':'b-gold'}">${pct}%</span>
         </div>
-        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
-        <div style="display:flex;justify-content:space-between">
-          <div style="font-size:11px;color:var(--green)">${fmt(netBalance)}</div>
-          <div style="font-size:11px;color:var(--muted)">${fmt(g.Target)}</div>
+        <div class="gbt"><div class="gbf" style="width:${pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;font-family:var(--font-m)">
+          <span class="cg">${fmt(bal)}</span>
+          <span class="cm">${fmt(target)}${dLeft!==null?` · ${dLeft>0?dLeft+'d left':'Due!'}`:''}</span>
         </div>
       </div>`;
     }).join('')}` : ''}
   `;
 
-  document.getElementById('dash-updated').textContent =
-    API_URL ? 'Live data · ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : 'Demo data — connect Google Sheets in Setup';
+  document.getElementById('dash-ts').textContent = API
+    ? 'Live data · '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})
+    : '⚠ Demo data — connect Google Sheets in Setup tab';
 }
 
-// ═══════════════════════════════════════════════
-// MONTHLY
-// ═══════════════════════════════════════════════
-async function renderMonthly(selectedMonth = null) {
-  const data = await fetchData();
-  const el = document.getElementById('monthly-content');
-
-  const tradesByMonth = groupByMonth(data.trades);
-  const expByMonth = groupByMonth(data.expenses);
-  const months = [...new Set([...Object.keys(tradesByMonth), ...Object.keys(expByMonth)])].sort().reverse();
-
-  if (!months.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No data yet</div>'; return; }
-
-  const active = selectedMonth || months[0];
-
-  const tabs = months.map(m => `<button class="month-tab ${m===active?'active':''}" onclick="renderMonthly('${m}')">${getMonthLabel(m)}</button>`).join('');
-
-  const mTrades = tradesByMonth[active] || [];
-  const mExp = expByMonth[active] || [];
-
-  const grossProfit = mTrades.reduce((s,t) => s + tradeAmount(t), 0);
-  const totalExp = mExp.reduce((s,e) => s + (parseFloat(e.Amount)||0), 0);
-  const net = grossProfit - totalExp;
-  const wins = mTrades.filter(t=>t.Outcome==='PROFIT').length;
-  const losses = mTrades.filter(t=>t.Outcome==='LOSS').length;
-  const winRate = mTrades.length ? Math.round(wins/mTrades.length*100) : 0;
-  const best = mTrades.reduce((a,t) => tradeAmount(t) > tradeAmount(a) ? t : a, mTrades[0] || {Amount:0,Instrument:'—'});
-  const worst = mTrades.reduce((a,t) => tradeAmount(t) < tradeAmount(a) ? t : a, mTrades[0] || {Amount:0,Instrument:'—'});
-
-  // Expense by category
-  const catMap = {};
-  mExp.forEach(e => { catMap[e.Category] = (catMap[e.Category]||0) + (parseFloat(e.Amount)||0); });
-  const cats = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
-  const maxCat = Math.max(...cats.map(c=>c[1]), 1);
-
-  el.innerHTML = `
-    <div class="month-tabs">${tabs}</div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-label">Gross Profit</div>
-        <div class="kpi-val c-green">${fmtShort(grossProfit)}</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Expenses</div>
-        <div class="kpi-val c-red">${fmtShort(totalExp)}</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Net Profit</div>
-        <div class="kpi-val c-${net>=0?'gold':'red'}">${fmtShort(net)}</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Win Rate</div>
-        <div class="kpi-val c-purple">${winRate}%</div>
-        <div class="kpi-change c-muted">${wins}W / ${losses}L</div>
-      </div>
-    </div>
-
-    ${mTrades.length ? `
-    <div class="section-label">Best & Worst Trade</div>
-    <div class="kpi-grid">
-      <div class="kpi bg-green">
-        <div class="kpi-label">Best Day</div>
-        <div class="kpi-val c-green">${fmtShort(tradeAmount(best))}</div>
-        <div class="kpi-change c-muted" style="font-size:9px">${best.Instrument||'—'}</div>
-      </div>
-      <div class="kpi bg-red">
-        <div class="kpi-label">Worst Day</div>
-        <div class="kpi-val c-red">${fmtShort(tradeAmount(worst))}</div>
-        <div class="kpi-change c-muted" style="font-size:9px">${worst.Instrument||'—'}</div>
-      </div>
-    </div>
-    ` : ''}
-
-    ${cats.length ? `
-    <div class="section-label">Expense Breakdown</div>
-    <div class="card">
-      <div class="bar-chart">
-        ${cats.map(([cat, amt]) => `
-          <div class="bar-row">
-            <div class="bar-label" style="font-size:10px">${cat}</div>
-            <div class="bar-track"><div class="bar-fill" style="width:${amt/maxCat*100}%;background:var(--red)"></div></div>
-            <div class="bar-num c-red">${fmtShort(amt)}</div>
-          </div>
-        `).join('')}
-      </div>
-    </div>` : ''}
-
-    ${mTrades.length ? `
-    <div class="section-label">Trades (${mTrades.length})</div>
-    <div class="card">
-      ${mTrades.sort((a,b)=>new Date(b.Date)-new Date(a.Date)).map(t => {
-        const pnl = tradeAmount(t);
-        const d = new Date(t.Date);
-        const dl = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
-        return `<div class="trade-item">
-          <div class="trade-dot ${pnl>=0?'profit':'loss'}"></div>
-          <div class="trade-info">
-            <div class="trade-name">${t.Instrument}</div>
-            <div class="trade-date">${dl}${t.Note?` · ${t.Note}`:''}</div>
-          </div>
-          <div class="trade-pnl c-${pnl>=0?'green':'red'}">${pnl>=0?'+':''}${fmtShort(pnl)}</div>
-        </div>`;
-      }).join('')}
-    </div>` : '<div class="empty"><div class="empty-icon">📭</div>No trades this month</div>'}
-
-    ${mExp.length ? `
-    <div class="section-label">Expenses (${mExp.length})</div>
-    <div class="card">
-      ${mExp.sort((a,b)=>new Date(b.Date)-new Date(a.Date)).map(e => {
-        const d = new Date(e.Date);
-        const dl = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
-        return `<div class="trade-item">
-          <div class="trade-info">
-            <div class="trade-name">${e.Description}</div>
-            <div class="trade-date">${dl} · <span class="exp-cat">${e.Category}</span></div>
-          </div>
-          <div class="trade-pnl c-red">-${fmtShort(e.Amount)}</div>
-        </div>`;
-      }).join('')}
-    </div>` : ''}
-  `;
+function calcStreak(trades) {
+  const sorted=[...trades].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+  let s=0; for(const t of sorted){if(t.Outcome==='PROFIT')s++;else break;} return s;
 }
 
-// ═══════════════════════════════════════════════
-// TRADES
-// ═══════════════════════════════════════════════
-async function renderTrades() {
-  const data = await fetchData();
-  const tradesByMonth = groupByMonth(data.trades);
-  const months = Object.keys(tradesByMonth).sort().reverse();
+// ── MONTHLY ──────────────────────────────────────────
+async function renderMonthly(sel=null) {
+  const d = await fetchData();
+  const trByM=byMonth(d.trades), exByM=byMonth(d.expenses);
+  const months=[...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort().reverse();
 
-  const tabsEl = document.getElementById('trade-tabs');
-  tabsEl.innerHTML = `<button class="month-tab ${currentTradeMonth==='all'?'active':''}" onclick="filterTrades('all')">All</button>` +
-    months.map(m => `<button class="month-tab ${currentTradeMonth===m?'active':''}" onclick="filterTrades('${m}')">${getMonthLabel(m)}</button>`).join('');
-
-  const trades = currentTradeMonth === 'all' ? data.trades : (tradesByMonth[currentTradeMonth] || []);
-  const sorted = [...trades].sort((a,b) => new Date(b.Date) - new Date(a.Date));
-
-  const el = document.getElementById('trades-content');
-  if (!sorted.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No trades yet</div>'; return; }
-
-  const total = sorted.reduce((s,t) => s + tradeAmount(t), 0);
-
-  el.innerHTML = `
-    <div class="card" style="margin-bottom:12px;text-align:center;padding:12px">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">${sorted.length} trades · Total P&L</div>
-      <div style="font-family:var(--font-display);font-size:22px;font-weight:700" class="c-${total>=0?'green':'red'}">${total>=0?'+':''}${fmt(total)}</div>
-    </div>
-    <div class="card">
-      ${sorted.map(t => {
-        const pnl = tradeAmount(t);
-        const d = new Date(t.Date);
-        const dl = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-        return `<div class="trade-item">
-          <div class="trade-dot ${pnl>=0?'profit':'loss'}"></div>
-          <div class="trade-info">
-            <div class="trade-name">${t.Instrument}</div>
-            <div class="trade-date">${dl}${t.Note?` · <em>${t.Note}</em>`:''}</div>
-          </div>
-          <div class="trade-pnl c-${pnl>=0?'green':'red'}">${pnl>=0?'+':''}${fmt(Math.abs(pnl))}</div>
-        </div>`;
-      }).join('')}
-    </div>
-  `;
-}
-
-function filterTrades(month) {
-  currentTradeMonth = month;
-  renderTrades();
-}
-
-// ═══════════════════════════════════════════════
-// SUBMIT FORMS
-// ═══════════════════════════════════════════════
-async function submitTrade() {
-  const instrument = document.getElementById('t-instrument').value === 'Other'
-    ? document.getElementById('t-other-name').value
-    : document.getElementById('t-instrument').value;
-  const outcome = document.getElementById('t-outcome').value;
-  const amount = parseFloat(document.getElementById('t-amount').value);
-  const date = document.getElementById('t-date').value;
-  const note = document.getElementById('t-note').value;
-
-  if (!date || !instrument || !amount) { toast('Fill all fields'); return; }
-
-  if (API_URL) {
-    try {
-      await api('addTrade', { date, instrument, outcome, amount, note });
-      cachedData = null;
-      toast('Trade added ✓');
-    } catch(e) { toast('Failed to save'); return; }
-  } else {
-    toast('Demo mode — connect Google Sheets to save');
+  if (!months.length) {
+    document.getElementById('monthly-content').innerHTML='<div class="empty"><div class="ei">📭</div>No data yet</div>';
+    return;
   }
-  document.getElementById('t-amount').value = '';
-  document.getElementById('t-note').value = '';
+  const m = sel||months[0];
+  const mTs=trByM[m]||[], mEs=exByM[m]||[];
+
+  // Exact numbers
+  const mg  = mTs.reduce((s,t)=>s+pnl(t),0);
+  const me  = mEs.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);
+  const mn  = mg - me;
+  const wins= mTs.filter(t=>t.Outcome==='PROFIT').length;
+  const losses=mTs.filter(t=>t.Outcome==='LOSS').length;
+  const wr  = mTs.length?Math.round(wins/mTs.length*100):0;
+  const best  = mTs.length?mTs.reduce((a,t)=>pnl(t)>pnl(a)?t:a):null;
+  const worst = mTs.length?mTs.reduce((a,t)=>pnl(t)<pnl(a)?t:a):null;
+
+  const catMap={};
+  mEs.forEach(e=>{ catMap[e.Category]=(catMap[e.Category]||0)+(parseFloat(e.Amount)||0); });
+  const cats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  const maxC=Math.max(...cats.map(c=>c[1]),1);
+
+  document.getElementById('monthly-content').innerHTML = `
+    <div class="mt">${months.map(mo=>`<button class="mtb ${mo===m?'active':''}" onclick="renderMonthly('${mo}')">${mlabel(mo)}</button>`).join('')}</div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="sum-row">
+        <div><div class="sum-label">Gross Profit</div><div class="sum-sub">${mTs.length} trades · ${wins}W / ${losses}L</div></div>
+        <div class="sum-val cg exact">${fmt(mg)}</div>
+      </div>
+      <div class="sum-row">
+        <div><div class="sum-label">Total Expenses</div><div class="sum-sub">${mEs.length} withdrawals</div></div>
+        <div class="sum-val cr exact">${fmt(me)}</div>
+      </div>
+      <div class="sum-row">
+        <div><div class="sum-label">Net Profit</div><div class="sum-sub">Gross − Expenses</div></div>
+        <div class="sum-val ${mn>=0?'cg':'cr'} exact">${mn>=0?'+':'−'}${fmt(mn)}</div>
+      </div>
+      <div class="sum-row">
+        <div><div class="sum-label">Win Rate</div><div class="sum-sub">${wins} wins of ${mTs.length} trades</div></div>
+        <div class="sum-val cp">${wr}%</div>
+      </div>
+    </div>
+
+    ${best&&worst?`
+    <div class="kg">
+      <div class="bw-card bw-green">
+        <div class="kpi-l" style="color:var(--green)">Best Day</div>
+        <div class="kpi-v cg exact" style="font-size:16px">${fmt(pnl(best))}</div>
+        <div class="kpi-s" style="font-size:10px;margin-top:4px">${best.Instrument}</div>
+        <div class="kpi-s" style="font-size:10px">${new Date(best.Date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</div>
+        ${best.Note?`<div class="kpi-s" style="font-size:9px;font-style:italic;margin-top:2px">${best.Note}</div>`:''}
+      </div>
+      <div class="bw-card bw-red">
+        <div class="kpi-l" style="color:var(--red)">Worst Day</div>
+        <div class="kpi-v cr exact" style="font-size:16px">${fmt(pnl(worst))}</div>
+        <div class="kpi-s" style="font-size:10px;margin-top:4px">${worst.Instrument}</div>
+        <div class="kpi-s" style="font-size:10px">${new Date(worst.Date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</div>
+        ${worst.Note?`<div class="kpi-s" style="font-size:9px;font-style:italic;margin-top:2px">${worst.Note}</div>`:''}
+      </div>
+    </div>` : ''}
+
+    ${cats.length?`
+    <div class="sl2">Expense Breakdown</div>
+    <div class="card">
+      <div class="bc">
+        ${cats.map(([c,a])=>`
+          <div class="br">
+            <div class="bl">${c}</div>
+            <div class="bt"><div class="bf" style="width:${a/maxC*100}%;background:var(--red)"></div></div>
+            <div class="bn cr exact">${fmt(a)}</div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${mTs.length?`
+    <div class="sl2">Trades (${mTs.length}) · Total: <span class="exact" style="font-family:var(--font-m)">${fmt(mg)}</span></div>
+    <div class="card">
+      ${[...mTs].sort((a,b)=>new Date(b.Date)-new Date(a.Date)).map(t=>{
+        const p=pnl(t);
+        const dl=new Date(t.Date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+        return `<div class="ti">
+          <div class="td ${p>=0?'p':'l'}"></div>
+          <div class="tinfo">
+            <div class="tname">${t.Instrument}</div>
+            <div class="tdate">${dl}</div>
+            ${t.Note?`<div class="tnote">${t.Note}</div>`:''}
+          </div>
+          <div class="tpnl ${p>=0?'cg':'cr'} exact">${p>=0?'+':'−'}${fmt(p)}</div>
+        </div>`;
+      }).join('')}
+    </div>` : '<div class="empty"><div class="ei">📊</div>No trades this month</div>'}
+
+    ${mEs.length?`
+    <div class="sl2">Expenses (${mEs.length}) · Total: <span class="exact" style="font-family:var(--font-m)">${fmt(me)}</span></div>
+    <div class="card">
+      ${[...mEs].sort((a,b)=>new Date(b.Date)-new Date(a.Date)).map(e=>{
+        const dl=new Date(e.Date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+        return `<div class="ti">
+          <div class="tinfo">
+            <div class="tname">${e.Description||e.Category}</div>
+            <div class="tdate">${dl} · <span class="badge b-blue">${e.Category}</span></div>
+          </div>
+          <div class="tpnl cr exact">−${fmt(e.Amount)}</div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+  `;
+}
+
+// ── TRADES PAGE ──────────────────────────────────────
+async function renderTrades() {
+  const d = await fetchData();
+  const trByM=byMonth(d.trades);
+  const months=Object.keys(trByM).sort().reverse();
+
+  document.getElementById('trade-tabs').innerHTML =
+    `<button class="mtb ${tradeMonth==='all'?'active':''}" onclick="setTM('all')">All</button>` +
+    months.map(m=>`<button class="mtb ${tradeMonth===m?'active':''}" onclick="setTM('${m}')">${mlabel(m)}</button>`).join('');
+
+  const trades = tradeMonth==='all'?d.trades:(trByM[tradeMonth]||[]);
+  const sorted=[...trades].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+  const total=sorted.reduce((s,t)=>s+pnl(t),0);
+  const wins=sorted.filter(t=>t.Outcome==='PROFIT').length;
+
+  document.getElementById('trade-sub').textContent = tradeMonth==='all'
+    ? `${sorted.length} total trades`
+    : mlabel(tradeMonth)+` · ${sorted.length} trades`;
+
+  if (!sorted.length) {
+    document.getElementById('trades-content').innerHTML='<div class="empty"><div class="ei">📭</div>No trades yet</div>';
+    return;
+  }
+
+  document.getElementById('trades-content').innerHTML = `
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:14px">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px">Total P&L</div>
+        <div style="font-size:22px;font-weight:800;font-family:var(--font-m)" class="${total>=0?'cg':'cr'}">${total>=0?'+':'−'}${fmt(total)}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="pill" style="margin-bottom:5px">${wins}W / ${sorted.length-wins}L</div>
+        <div class="pill">${sorted.length?Math.round(wins/sorted.length*100):0}% win rate</div>
+      </div>
+    </div>
+    <div class="card">
+      ${sorted.map(t=>{
+        const p=pnl(t);
+        const dl=new Date(t.Date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});
+        return `<div class="ti">
+          <div class="td ${p>=0?'p':'l'}"></div>
+          <div class="tinfo">
+            <div class="tname">${t.Instrument}</div>
+            <div class="tdate">${dl}</div>
+            ${t.Note?`<div class="tnote">${t.Note}</div>`:''}
+          </div>
+          <div class="tpnl ${p>=0?'cg':'cr'} exact">${p>=0?'+':'−'}${fmt(p)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function setTM(m) { tradeMonth=m; renderTrades(); }
+
+// ── ADD FORMS ────────────────────────────────────────
+function initAddForms() {
+  const today=new Date().toISOString().split('T')[0];
+  ['t-date','e-date','i-date'].forEach(id=>{ const el=document.getElementById(id); if(el)el.value=today; });
+}
+function toggleOther() {
+  document.getElementById('t-other-g').style.display=document.getElementById('t-inst').value==='Other'?'block':'none';
+}
+function switchForm(type,btn) {
+  ['trade','expense','invest','goal'].forEach(t=>document.getElementById('form-'+t).style.display=t===type?'block':'none');
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+
+async function submitTrade() {
+  const inst=document.getElementById('t-inst').value==='Other'?document.getElementById('t-other').value:document.getElementById('t-inst').value;
+  const date=document.getElementById('t-date').value;
+  const outcome=document.getElementById('t-out').value;
+  const amount=parseFloat(document.getElementById('t-amt').value);
+  const note=document.getElementById('t-note').value;
+  if(!date||!inst||!amount){toast('Fill date, instrument & amount');return;}
+  if(!API){toast('Connect Google Sheets in Setup first');return;}
+  event.target.textContent='Saving…'; event.target.disabled=true;
+  const r=await apiPost({action:'addTrade',date,instrument:inst,outcome,amount,note});
+  event.target.textContent='+ Add Trade'; event.target.disabled=false;
+  if(r&&r.ok){toast('Trade saved ✓');document.getElementById('t-amt').value='';document.getElementById('t-note').value='';}
 }
 
 async function submitExpense() {
-  const date = document.getElementById('e-date').value;
-  const category = document.getElementById('e-cat').value;
-  const amount = parseFloat(document.getElementById('e-amount').value);
-  const description = document.getElementById('e-desc').value;
-
-  if (!date || !amount) { toast('Fill all fields'); return; }
-
-  if (API_URL) {
-    try {
-      await api('addExpense', { date, category, amount, description });
-      cachedData = null;
-      toast('Expense added ✓');
-    } catch(e) { toast('Failed to save'); return; }
-  } else {
-    toast('Demo mode — connect Google Sheets to save');
-  }
-  document.getElementById('e-amount').value = '';
-  document.getElementById('e-desc').value = '';
+  const date=document.getElementById('e-date').value;
+  const category=document.getElementById('e-cat').value;
+  const amount=parseFloat(document.getElementById('e-amt').value);
+  const description=document.getElementById('e-desc').value;
+  if(!date||!amount){toast('Fill date & amount');return;}
+  if(!API){toast('Connect Google Sheets in Setup first');return;}
+  event.target.textContent='Saving…'; event.target.disabled=true;
+  const r=await apiPost({action:'addExpense',date,category,amount,description});
+  event.target.textContent='+ Add Expense'; event.target.disabled=false;
+  if(r&&r.ok){toast('Expense saved ✓');document.getElementById('e-amt').value='';document.getElementById('e-desc').value='';}
 }
 
-async function submitInvestment() {
-  const date = document.getElementById('i-date').value;
-  const amount = parseFloat(document.getElementById('i-amount').value);
-  const note = document.getElementById('i-note').value;
-
-  if (!date || !amount) { toast('Fill all fields'); return; }
-
-  if (API_URL) {
-    try {
-      await api('addInvestment', { date, amount, note });
-      cachedData = null;
-      toast('Investment added ✓');
-    } catch(e) { toast('Failed to save'); return; }
-  } else {
-    toast('Demo mode — connect Google Sheets to save');
-  }
-  document.getElementById('i-amount').value = '';
-  document.getElementById('i-note').value = '';
+async function submitInvest() {
+  const date=document.getElementById('i-date').value;
+  const amount=parseFloat(document.getElementById('i-amt').value);
+  const note=document.getElementById('i-note').value;
+  if(!date||!amount){toast('Fill date & amount');return;}
+  if(!API){toast('Connect Google Sheets in Setup first');return;}
+  event.target.textContent='Saving…'; event.target.disabled=true;
+  const r=await apiPost({action:'addInvestment',date,amount,note});
+  event.target.textContent='+ Add Investment'; event.target.disabled=false;
+  if(r&&r.ok){toast('Investment saved ✓');document.getElementById('i-amt').value='';document.getElementById('i-note').value='';}
 }
 
 async function submitGoal() {
-  const name = document.getElementById('g-name').value;
-  const target = parseFloat(document.getElementById('g-target').value);
-  const date = document.getElementById('g-date').value;
-
-  if (!name || !target) { toast('Fill all fields'); return; }
-
-  if (API_URL) {
-    try {
-      await api('addGoal', { name, target, date });
-      cachedData = null;
-      toast('Goal set ✓');
-    } catch(e) { toast('Failed to save'); return; }
-  } else {
-    toast('Demo mode — connect Google Sheets to save');
-  }
-  document.getElementById('g-name').value = '';
-  document.getElementById('g-target').value = '';
-  document.getElementById('g-date').value = '';
+  const name=document.getElementById('g-name').value;
+  const target=parseFloat(document.getElementById('g-target').value);
+  const date=document.getElementById('g-date').value;
+  const note=document.getElementById('g-note').value;
+  if(!name||!target){toast('Fill name & target');return;}
+  if(!API){toast('Connect Google Sheets in Setup first');return;}
+  event.target.textContent='Saving…'; event.target.disabled=true;
+  const r=await apiPost({action:'addGoal',name,target,date,note});
+  event.target.textContent='+ Set Goal'; event.target.disabled=false;
+  if(r&&r.ok){toast('Goal saved ✓');['g-name','g-target','g-date','g-note'].forEach(id=>document.getElementById(id).value='');}
 }
 
-// ═══════════════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════════════
-function saveApiUrl() {
-  const url = document.getElementById('api-url-input').value.trim();
-  if (!url) { toast('Enter a URL first'); return; }
-  API_URL = url;
-  localStorage.setItem('groww_api_url', url);
-  document.getElementById('api-url-display').textContent = url;
-  cachedData = null;
-  toast('Saved! Testing connection…');
-  fetchData(true).then(d => {
-    if (d && d.trades !== undefined) toast('Connected ✓ — ' + d.trades.length + ' trades loaded');
-    else toast('Connected but no data yet');
-  }).catch(() => toast('Could not connect — check URL'));
+// ── SETTINGS ─────────────────────────────────────────
+function initSettings() {
+  document.getElementById('script-box').textContent=APPS_SCRIPT;
+  document.getElementById('share-url-display').textContent=location.href;
+  if(API) document.getElementById('api-display').textContent=API;
 }
-
+function saveApi() {
+  const url=document.getElementById('api-input').value.trim();
+  if(!url){toast('Paste a URL first');return;}
+  API=url; localStorage.setItem('g_api',url);
+  document.getElementById('api-display').textContent=url;
+  cache=null;
+  toast('Testing connection…');
+  fetchData(true).then(d=>{
+    if(d&&d.trades!==undefined) toast(`Connected ✓ — ${d.trades.length} trades loaded`);
+    else toast('Saved but no data returned yet');
+  }).catch(()=>toast('Could not connect — check URL'));
+}
 async function importHistory() {
-  if (!API_URL) { toast('Set API URL first'); return; }
-  toast('Importing historical data…');
-  const demo = getDemoData();
-  let count = 0;
-  for (const t of demo.trades) {
-    await api('addTrade',{date:t.Date,instrument:t.Instrument,outcome:t.Outcome,amount:t.Amount,note:t.Note});
-    count++;
-  }
-  for (const e of demo.expenses) {
-    await api('addExpense',{date:e.Date,category:e.Category,amount:e.Amount,description:e.Description});
-  }
-  for (const i of demo.investments) {
-    await api('addInvestment',{date:i.Date,amount:i.Amount,note:i.Note});
-  }
-  cachedData = null;
-  toast('Imported ' + count + ' trades + expenses ✓');
+  if(!API){toast('Set API URL first');return;}
+  toast('Importing history…');
+  const dm=demo();
+  for(const t of dm.trades) await apiPost({action:'addTrade',date:t.Date,instrument:t.Instrument,outcome:t.Outcome,amount:t.Amount,note:t.Note});
+  for(const e of dm.expenses) await apiPost({action:'addExpense',date:e.Date,category:e.Category,amount:e.Amount,description:e.Description});
+  for(const i of dm.investments) await apiPost({action:'addInvestment',date:i.Date,amount:i.Amount,note:i.Note});
+  for(const g of dm.goals) await apiPost({action:'addGoal',name:g.Name,target:g.Target,date:g.Date,note:g.Note});
+  cache=null;
+  toast('All history imported ✓');
 }
-
-function switchForm(type) {
-  ['trade','expense','investment','goal'].forEach(t => {
-    document.getElementById('form-'+t).style.display = t === type ? 'block' : 'none';
-  });
-  document.querySelectorAll('.toggle-btn').forEach((b,i) => {
-    b.classList.toggle('active', ['trade','expense','investment','goal'][i] === type);
-  });
-}
-
-document.getElementById('t-instrument').addEventListener('change', function() {
-  document.getElementById('t-other-group').style.display = this.value === 'Other' ? 'block' : 'none';
-});
-
-function shareApp() {
-  const url = location.href;
-  if (navigator.share) {
-    navigator.share({ title: 'Groww Tracker', url });
-  } else {
-    navigator.clipboard.writeText(url).then(() => toast('Link copied!'));
-  }
-}
-
 function copyScript() {
-  navigator.clipboard.writeText(APPS_SCRIPT).then(() => toast('Script copied!'));
+  navigator.clipboard.writeText(APPS_SCRIPT)
+    .then(()=>toast('Script copied — paste in Apps Script'))
+    .catch(()=>toast('Select and copy the code manually'));
+}
+function shareApp() {
+  const url=location.href;
+  if(navigator.share) navigator.share({title:'Groww Tracker',text:'My trading dashboard',url});
+  else navigator.clipboard.writeText(url).then(()=>toast('Link copied!'));
 }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  buildPinGrid();
-  document.getElementById('apps-script-code').textContent = APPS_SCRIPT;
-  document.getElementById('share-url').textContent = location.href;
-  if (API_URL) document.getElementById('api-url-display').textContent = API_URL;
-  renderDashboard();
+// ── INIT ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  if(API) document.getElementById('api-display').textContent=API;
+  renderDash();
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 });
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js");}</script>
 </body>
 </html>
