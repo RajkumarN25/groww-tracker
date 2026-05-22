@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#f0f0eb">
+  <title>Groww Tracker · Live</title>
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <style>
+    /* ========== RESET & VARIABLES ========== */
+    :root {
+      --bg: #f0f0eb;
+      --card: #ffffff;
+      --border: #e2e2da;
+      --text: #1a1a18;
+      --muted: #888880;
+      --green: #1a8a4a;
+      --green-bg: #e8f5ee;
+      --red: #c0392b;
+      --red-bg: #fcecea;
+      --blue: #1e6eb5;
+      --gold: #b07800;
+      --gold-bg: #fdf5e0;
+      --font-h: 'Inter', sans-serif;
+      --font-m: 'JetBrains Mono', monospace;
+      --r: 14px;
+      --nav: 60px;
+      --max: 480px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-h);
+      overflow: hidden;
+    }
+    #app {
+      max-width: var(--max);
+      margin: 0 auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* ========== PAGES & NAVIGATION ========== */
+    .page {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: calc(var(--nav) + 16px);
+      background: var(--bg);
+    }
+    .page.active {
+      display: block;
+    }
+    .pi {
+      padding: 12px 14px 0;
+    }
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: var(--max);
+      margin: 0 auto;
+      height: var(--nav);
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex;
+      z-index: 100;
+    }
+    .nb {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 600;
+      gap: 3px;
+    }
+    .nb.active {
+      color: var(--green);
+    }
+    /* ========== HEADER & CARDS ========== */
+    .ph {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 14px 8px;
+    }
+    .pt {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .hero {
+      background: var(--green);
+      border-radius: var(--r);
+      padding: 20px 16px;
+      color: white;
+      margin-bottom: 10px;
+    }
+    .hero-val {
+      font-size: 38px;
+      font-weight: 800;
+    }
+    .kg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .kpi {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .kpi-l {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .kpi-v {
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .sr {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .sc {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    /* ========== TABBED INTERFACE (Trades & Expenses side by side) ========== */
+    .tab-container {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active-pane {
+      display: block;
+    }
+    /* ========== TRADE / EXPENSE ITEMS ========== */
+    .ti {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .td {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .td.p {
+      background: var(--green);
+    }
+    .td.l {
+      background: var(--red);
+    }
+    .tpnl {
+      font-family: var(--font-m);
+      font-weight: 600;
+    }
+    /* ========== FORMS & BUTTONS ========== */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .btn-g {
+      background: var(--green);
+      color: white;
+    }
+    .btn-r {
+      background: var(--red);
+      color: white;
+    }
+    .btn-b {
+      background: var(--blue);
+      color: white;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+    .mt {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    .mtb {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: white;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mtb.active {
+      background: var(--green);
+      color: white;
+      border-color: var(--green);
+    }
+    .fg {
+      margin-bottom: 12px;
+    }
+    .fi, .fs {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-h);
+    }
+    .fr2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a18;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      opacity: 0;
+      transition: 0.2s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    #toast.show {
+      opacity: 1;
+    }
+    .exact {
+      font-family: var(--font-m);
+    }
+    .cg {
+      color: var(--green);
+    }
+    .cr {
+      color: var(--red);
+    }
+    .cb {
+      color: var(--blue);
+    }
+    .loader {
+      text-align: center;
+      padding: 40px;
+    }
+    .pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- DASHBOARD -->
+  <div class="page active" id="pg-dashboard">
+    <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="dash-ts">Live</div></div><button class="btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="refreshAll()">↻</button></div>
+    <div class="pi" id="dash-content"><div class="loader">Loading...</div></div>
+  </div>
+
+  <!-- MONTHLY -->
+  <div class="page" id="pg-monthly">
+    <div class="ph"><div><div class="pt">Monthly</div><div class="ps">Profit & expenses</div></div></div>
+    <div class="pi" id="monthly-content"><div class="loader">Loading...</div></div>
+  </div>
+
+  <!-- TRADES + EXPENSES (side by side tabs) -->
+  <div class="page" id="pg-trades">
+    <div class="ph"><div><div class="pt">Trades &amp; Expenses</div><div class="ps" id="trade-sub">All entries</div></div></div>
+    <div class="pi">
+      <!-- Month filter -->
+      <div class="mt" id="trade-tabs"></div>
+      <!-- Tab Switcher (Trades / Expenses) -->
+      <div class="tab-container">
+        <button class="tab-btn active" data-tab="trades-list">📈 Trades</button>
+        <button class="tab-btn" data-tab="expenses-list">💸 Expenses</button>
+      </div>
+      <!-- Trades Pane -->
+      <div id="trades-list" class="tab-pane active-pane">
+        <div id="trades-content"><div class="loader">Loading trades...</div></div>
+      </div>
+      <!-- Expenses Pane -->
+      <div id="expenses-list" class="tab-pane">
+        <div id="expenses-content"><div class="loader">Loading expenses...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD ENTRY -->
+  <div class="page" id="pg-add">
+    <div class="ph"><div><div class="pt">Add Entry</div></div></div>
+    <div class="pi">
+      <div class="mt" style="margin-bottom:16px;">
+        <button class="mtb active" onclick="switchForm('trade',this)">Trade</button>
+        <button class="mtb" onclick="switchForm('expense',this)">Expense</button>
+        <button class="mtb" onclick="switchForm('invest',this)">Investment</button>
+      </div>
+      <div id="form-trade">
+        <div class="fg"><label>Date</label><input class="fi" type="date" id="t-date"></div>
+        <div class="fg"><label>Instrument</label><input class="fi" type="text" id="t-inst" placeholder="e.g. SENSEX [PUT]"></div>
+        <div class="fr2">
+          <div><label>Outcome</label><select class="fs" id="t-out"><option>PROFIT</option><option>LOSS</option></select></div>
+          <div><label>Amount (₹)</label><input class="fi" type="number" id="t-amt"></div>
+        </div>
+        <div class="fg"><label>Note</label><input class="fi" type="text" id="t-note"></div>
+        <button class="btn btn-g" onclick="submitTrade()">+ Add Trade</button>
+      </div>
+      <div id="form-expense" style="display:none">
+        <div class="fg"><label>Date</label><input class="fi" type="date" id="e-date"></div>
+        <div class="fr2"><div><label>Category</label><select class="fs" id="e-cat"><option>Food</option><option>Medical</option><option>Transport</option><option>EMI</option><option>Family</option><option>Entertainment</option><option>Other</option></select></div><div><label>Amount (₹)</label><input class="fi" type="number" id="e-amt"></div></div>
+        <div class="fg"><label>Description</label><input class="fi" type="text" id="e-desc"></div>
+        <button class="btn btn-r" onclick="submitExpense()">+ Add Expense</button>
+      </div>
+      <div id="form-invest" style="display:none">
+        <div class="fg"><label>Date</label><input class="fi" type="date" id="i-date"></div>
+        <div class="fg"><label>Amount (₹)</label><input class="fi" type="number" id="i-amt"></div>
+        <div class="fg"><label>Note</label><input class="fi" type="text" id="i-note" placeholder="e.g., Added capital"></div>
+        <button class="btn btn-b" onclick="submitInvest()">+ Add Investment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP (with Import History button) -->
+  <div class="page" id="pg-settings">
+    <div class="ph"><div><div class="pt">Setup</div></div></div>
+    <div class="pi">
+      <div class="card">
+        <div class="kpi-l">📂 Import Your Excel Data</div>
+        <div style="font-size: 12px; margin-bottom: 12px;">
+          Upload your original <strong>Groww_Dashboard.xlsx</strong> file.<br>
+          It will automatically import all trades, expenses and investments into your Google Sheet.
+        </div>
+        <input type="file" id="excelUpload" accept=".xlsx, .xls, .xlsm" style="margin-bottom: 12px;">
+        <button class="btn btn-g" onclick="uploadExcelAndImport()" style="margin-bottom: 8px;">🚀 Import History from Excel</button>
+        <div id="uploadStatus" style="font-size: 11px; color: var(--muted);"></div>
+      </div>
+      <div class="card">
+        <div class="kpi-l">⚙️ Connection Status</div>
+        <div id="api-status" style="font-size: 12px;">Checking connection...</div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <button class="nb active" onclick="nav('dashboard',this)"><span>📊</span><span>Dash</span></button>
+    <button class="nb" onclick="nav('monthly',this)"><span>📅</span><span>Monthly</span></button>
+    <button class="nb" onclick="nav('trades',this)"><span>📈</span><span>Trades</span></button>
+    <button class="nb" onclick="nav('add',this)"><span>➕</span><span>Add</span></button>
+    <button class="nb" onclick="nav('settings',this)"><span>⚙️</span><span>Setup</span></button>
+  </nav>
+</div>
+<div id="toast"></div>
+
+<script>
+  // ========== CONFIGURATION ==========
+  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
+  const HARDCODED_API = 'https://script.google.com/macros/s/AKfycbzD0Y967lwj4CCNqNSLWhS4d4uHAs39nCqlCuYqrgjJm6CrkKEThkM-qvlgf7JAJ8mm/exec';
+
+  let API = HARDCODED_API;
+  let cache = null;
+  let tradeMonth = 'all';
+
+  // Helper functions
+  const fmt = n => '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+  const pnl = t => t.Outcome === 'PROFIT' ? +t.Amount : -Math.abs(t.Amount);
+  const mkey = d => new Date(d).toISOString().slice(0,7);
+  const mlabel = k => { const [y,m]=k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+y; };
+  
+  function toast(msg) { 
+    const t=document.getElementById('toast'); 
+    t.textContent=msg; 
+    t.classList.add('show'); 
+    setTimeout(()=>t.classList.remove('show'),2500); 
+  }
+
+  // ========== DATA FETCHING ==========
+  async function fetchData() {
+    if (cache) return cache;
+    if (!API || API === 'YOUR_APPS_SCRIPT_URL_HERE') { 
+      toast('⚠️ Replace the Apps Script URL in the code'); 
+      return demoData(); 
+    }
+    try {
+      const res = await fetch(API+'?action=read&t='+Date.now());
+      const d = await res.json();
+      if (d && d.trades) { cache = d; return d; }
+      throw new Error();
+    } catch(e) { 
+      console.warn(e);
+      return demoData(); 
+    }
+  }
+
+  async function apiPost(body) {
+    if (!API || API === 'YOUR_APPS_SCRIPT_URL_HERE') { 
+      toast('Set correct Apps Script URL first'); 
+      return null; 
+    }
+    try {
+      const res = await fetch(API, { 
+        method:'POST', 
+        body:JSON.stringify(body), 
+        headers:{'Content-Type':'text/plain'} 
+      });
+      const d = await res.json();
+      if (d && d.ok) cache = null;
+      return d;
+    } catch(e) { 
+      toast('Network error: ' + e.message); 
+      return null; 
+    }
+  }
+
+  // Demo data (your exact March–May numbers)
+  function demoData() {
+    return {
+      trades: [
+        {Date:"2026-03-12",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:2665,Note:""},
+        {Date:"2026-03-16",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:392,Note:""},
+        {Date:"2026-03-17",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:1148,Note:""},
+        {Date:"2026-03-18",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:1373,Note:""},
+        {Date:"2026-03-19",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:11529,Note:""},
+        {Date:"2026-03-23",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:3692,Note:""},
+        {Date:"2026-03-24",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:16830,Note:"Best day"},
+        {Date:"2026-03-25",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:14414,Note:""},
+        {Date:"2026-03-27",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:4421,Note:""},
+        {Date:"2026-03-30",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:8962,Note:""},
+        {Date:"2026-04-01",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:13156,Note:""},
+        {Date:"2026-04-02",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:116997,Note:"Massive selloff"},
+        {Date:"2026-04-06",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:4695,Note:""},
+        {Date:"2026-04-07",Instrument:"SENSEX [CALL & PUT]",Outcome:"LOSS",Amount:4429,Note:"Fakeout"},
+        {Date:"2026-04-08",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:3307,Note:""},
+        {Date:"2026-04-09",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:29853,Note:""},
+        {Date:"2026-04-10",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:349,Note:""},
+        {Date:"2026-04-13",Instrument:"SENSEX [CALL & PUT]",Outcome:"LOSS",Amount:2994,Note:""},
+        {Date:"2026-04-15",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:4263,Note:""},
+        {Date:"2026-04-16",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:6989,Note:""},
+        {Date:"2026-04-17",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:8672,Note:""},
+        {Date:"2026-04-20",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:9060,Note:""},
+        {Date:"2026-04-21",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:827,Note:""},
+        {Date:"2026-04-22",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:16528,Note:""},
+        {Date:"2026-04-23",Instrument:"SENSEX [CALL]",Outcome:"PROFIT",Amount:7535,Note:""},
+        {Date:"2026-04-24",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:267,Note:""},
+        {Date:"2026-04-29",Instrument:"SENSEX [PUT]",Outcome:"LOSS",Amount:35691,Note:"Held too long"},
+        {Date:"2026-04-30",Instrument:"SENSEX [CALL & PUT]",Outcome:"PROFIT",Amount:10525,Note:""},
+        {Date:"2026-05-04",Instrument:"SENSEX [PUT]",Outcome:"PROFIT",Amount:1052,Note:""},
+        {Date:"2026-05-05",Instrument:"NIFTY [CALL & PUT]",Outcome:"PROFIT",Amount:6645,Note:""}
+      ],
+      expenses: [
+        {Date:"2026-03-20",Category:"Family",Amount:1000,Description:"Birthday"},
+        {Date:"2026-03-23",Category:"Other",Amount:100,Description:"Expenses"},
+        {Date:"2026-03-24",Category:"Family",Amount:900,Description:"Ranjith"},
+        {Date:"2026-03-27",Category:"Food",Amount:400,Description:"Thursday"},
+        {Date:"2026-03-27",Category:"Food",Amount:4000,Description:"Weekend"},
+        {Date:"2026-03-30",Category:"Food",Amount:1000,Description:"Toy+mutton"},
+        {Date:"2026-03-30",Category:"Other",Amount:2000,Description:"House"},
+        {Date:"2026-04-02",Category:"Food",Amount:698,Description:""},
+        {Date:"2026-04-10",Category:"Entertainment",Amount:15000,Description:"Trip"},
+        {Date:"2026-04-14",Category:"Other",Amount:30300,Description:"Phone+CC"},
+        {Date:"2026-04-14",Category:"Family",Amount:100,Description:"Raj"},
+        {Date:"2026-04-15",Category:"Food",Amount:900,Description:"Mutton"},
+        {Date:"2026-04-16",Category:"EMI",Amount:4555,Description:"Car EMI"},
+        {Date:"2026-04-16",Category:"Medical",Amount:516,Description:"Hospital+snack"},
+        {Date:"2026-04-18",Category:"Medical",Amount:2200,Description:"Hospital"},
+        {Date:"2026-04-19",Category:"Food",Amount:1000,Description:"Sunday"},
+        {Date:"2026-04-22",Category:"Other",Amount:1000,Description:"Home"},
+        {Date:"2026-04-24",Category:"Family",Amount:10000,Description:"Raj"},
+        {Date:"2026-04-25",Category:"Medical",Amount:700,Description:"Raj amma"},
+        {Date:"2026-04-24",Category:"Other",Amount:150,Description:"Raj mobile"},
+        {Date:"2026-04-26",Category:"Transport",Amount:200,Description:"Petrol"},
+        {Date:"2026-04-27",Category:"Medical",Amount:200,Description:"Visakan"},
+        {Date:"2026-04-27",Category:"Transport",Amount:400,Description:"Nisha"},
+        {Date:"2026-04-30",Category:"Transport",Amount:4000,Description:"Bike service"}
+      ],
+      investments: [
+        {Date:"2026-03-01",Amount:184000,Note:"Initial capital"},
+        {Date:"2026-04-17",Amount:100000,Note:"From father"}
+      ],
+      goals: []
+    };
+  }
+
+  // ========== DASHBOARD RENDERING ==========
+  async function renderDash() {
+    const d = await fetchData();
+    const inv = d.investments.reduce((s,i)=>s+(i.Amount||0),0);
+    const gross = d.trades.reduce((s,t)=>s+pnl(t),0);
+    const exp = d.expenses.reduce((s,e)=>s+(e.Amount||0),0);
+    const net = gross - exp;
+    const bal = inv + net;
+    const wins = d.trades.filter(t=>t.Outcome==='PROFIT').length;
+    const losses = d.trades.length - wins;
+    const wr = d.trades.length ? Math.round(wins/d.trades.length*100) : 0;
+    const byMonth = (items,key='Date') => items.reduce((g,i)=>{ let k=mkey(i[key]); (g[k]=g[k]||[]).push(i); return g;},{});
+    const trByM = byMonth(d.trades);
+    const exByM = byMonth(d.expenses);
+    const months = [...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort();
+    const mRows = months.map(m=>{
+      const mg = (trByM[m]||[]).reduce((s,t)=>s+pnl(t),0);
+      const me = (exByM[m]||[]).reduce((s,e)=>s+(e.Amount||0),0);
+      return {label:mlabel(m), mg, me, mn:mg-me};
+    });
+    const maxAll = Math.max(...mRows.map(r=>Math.max(r.mg,r.me)),1);
+    const streak = [...d.trades].sort((a,b)=>new Date(b.Date)-new Date(a.Date)).reduce((s,t)=>t.Outcome==='PROFIT'?s+1:0,0);
+    const roi = inv>0 ? ((net/inv)*100).toFixed(1) : 0;
+    document.getElementById('dash-content').innerHTML = `
+      <div class="hero"><div class="hero-label">Portfolio Value</div><div class="hero-val">${fmt(bal)}</div><div class="hero-sub">${net>=0?'▲':'▼'} ${fmt(net)} net · ${roi}% ROI</div><div style="display:flex;gap:8px;margin-top:10px;"><div class="hero-badge" style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:20px;">📈 ${d.trades.length} trades</div><div class="hero-badge">${wr}% win rate</div></div></div>
+      <div class="kg"><div class="kpi"><div class="kpi-l">Invested</div><div class="kpi-v cb exact">${fmt(inv)}</div></div><div class="kpi"><div class="kpi-l">Gross Profit</div><div class="kpi-v cg exact">${fmt(gross)}</div></div><div class="kpi"><div class="kpi-l">Expenses</div><div class="kpi-v cr exact">${fmt(exp)}</div></div><div class="kpi"><div class="kpi-l">Net Profit</div><div class="kpi-v ${net>=0?'cg':'cr'} exact">${fmt(net)}</div></div></div>
+      <div class="sr"><div class="sc"><div class="sv cg">${wins}</div><div class="sl">Wins</div></div><div class="sc"><div class="sv cr">${losses}</div><div class="sl">Losses</div></div><div class="sc"><div class="sv cp">${wr}%</div><div class="sl">Win Rate</div></div></div>
+      ${streak>1?`<div class="insight" style="background:var(--gold-bg);padding:10px;border-radius:10px;margin-bottom:10px;"><strong>🔥 ${streak}-trade win streak</strong> – keep going!</div>`:''}
+      <div class="card">${mRows.map(r=>`<div class="sum-row"><div><b>${r.label}</b><br><span style="font-size:10px;">P/L ${fmt(r.mg)} · Exp ${fmt(r.me)}</span></div><div class="${r.mn>=0?'cg':'cr'} exact">${r.mn>=0?'+':'−'}${fmt(r.mn)}</div></div>`).join('')}<div class="sum-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:10px;"><b>Total net</b><span class="cg exact">${fmt(net)}</span></div></div>
+      <div class="card">${mRows.map(r=>`<div><div style="display:flex;justify-content:space-between;font-size:11px;"><span>${r.label}</span><span class="${r.mn>=0?'cg':'cr'}">${fmt(r.mn)}</span></div><div style="height:6px;background:var(--border);border-radius:3px;margin:4px 0;"><div style="width:${r.mg/maxAll*100}%;height:100%;background:var(--green);border-radius:3px;"></div></div><div style="height:6px;background:var(--border);border-radius:3px;"><div style="width:${r.me/maxAll*100}%;height:100%;background:var(--red);border-radius:3px;"></div></div></div>`).join('')}</div>
+    `;
+    document.getElementById('dash-ts').innerText = API && API!=='YOUR_APPS_SCRIPT_URL_HERE' ? '✅ Live' : '⚠️ Demo mode – set URL';
+  }
+
+  async function renderMonthly(sel=null) {
+    const d = await fetchData();
+    const trByM = d.trades.reduce((g,t)=>{ let k=mkey(t.Date); (g[k]=g[k]||[]).push(t); return g;},{});
+    const exByM = d.expenses.reduce((g,e)=>{ let k=mkey(e.Date); (g[k]=g[k]||[]).push(e); return g;},{});
+    const months = Object.keys(trByM).concat(Object.keys(exByM)).filter((v,i,a)=>a.indexOf(v)===i).sort().reverse();
+    if (!months.length) { document.getElementById('monthly-content').innerHTML='<div class="empty">No data</div>'; return; }
+    const m = sel || months[0];
+    const trades = trByM[m]||[];
+    const expenses = exByM[m]||[];
+    const mg = trades.reduce((s,t)=>s+pnl(t),0);
+    const me = expenses.reduce((s,e)=>s+(e.Amount||0),0);
+    const wins = trades.filter(t=>t.Outcome==='PROFIT').length;
+    const cats = expenses.reduce((o,e)=>{ o[e.Category]=(o[e.Category]||0)+e.Amount; return o;},{});
+    const maxCat = Math.max(...Object.values(cats),1);
+    document.getElementById('monthly-content').innerHTML = `
+      <div class="mt">${months.map(mo=>`<button class="mtb ${mo===m?'active':''}" onclick="renderMonthly('${mo}')">${mlabel(mo)}</button>`).join('')}</div>
+      <div class="card"><div class="sum-row"><span>Gross Profit</span><span class="cg exact">${fmt(mg)}</span></div><div class="sum-row"><span>Expenses</span><span class="cr exact">${fmt(me)}</span></div><div class="sum-row"><span>Net Profit</span><span class="${mg-me>=0?'cg':'cr'} exact">${fmt(mg-me)}</span></div><div class="sum-row"><span>Win Rate</span><span>${trades.length?Math.round(wins/trades.length*100):0}%</span></div></div>
+      <div class="sl2" style="margin:12px 0 6px;">Expense Breakdown</div><div class="card">${Object.entries(cats).map(([c,a])=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:70px;font-size:10px;">${c}</div><div style="flex:1;height:6px;background:var(--border);border-radius:3px;"><div style="width:${a/maxCat*100}%;height:100%;background:var(--red);border-radius:3px;"></div></div><div class="cr exact" style="width:60px;">${fmt(a)}</div></div>`).join('')}</div>
+      <div class="sl2">Trades (${trades.length})</div><div class="card">${trades.sort((a,b)=>new Date(b.Date)-new Date(a.Date)).map(t=>`<div class="ti"><div class="td ${pnl(t)>=0?'p':'l'}"></div><div class="tinfo"><div><b>${t.Instrument}</b></div><div class="tdate">${new Date(t.Date).toLocaleDateString()}</div>${t.Note?`<div style="font-size:10px;color:var(--muted);">${t.Note}</div>`:''}</div><div class="tpnl ${pnl(t)>=0?'cg':'cr'}">${pnl(t)>=0?'+':'−'}${fmt(pnl(t))}</div></div>`).join('')}</div>
+    `;
+  }
+
+  // ========== TRADES + EXPENSES (side by side tabs) ==========
+  async function renderTradesAndExpenses() {
+    const d = await fetchData();
+    // Month filter tabs (only trades count matters for month filter)
+    const byM = d.trades.reduce((g,t)=>{ let k=mkey(t.Date); (g[k]=g[k]||[]).push(t); return g;},{});
+    const months = Object.keys(byM).sort().reverse();
+    document.getElementById('trade-tabs').innerHTML = `<button class="mtb ${tradeMonth==='all'?'active':''}" onclick="setTM('all')">All</button>` + months.map(m=>`<button class="mtb ${tradeMonth===m?'active':''}" onclick="setTM('${m}')">${mlabel(m)}</button>`).join('');
+    
+    const filteredTrades = tradeMonth==='all' ? d.trades : (byM[tradeMonth]||[]);
+    const filteredExpenses = tradeMonth==='all' ? d.expenses : d.expenses.filter(e => mkey(e.Date) === tradeMonth);
+    
+    const sortedTrades = [...filteredTrades].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+    const totalPnL = sortedTrades.reduce((s,t)=>s+pnl(t),0);
+    const wins = sortedTrades.filter(t=>t.Outcome==='PROFIT').length;
+    
+    // Render Trades pane
+    document.getElementById('trades-content').innerHTML = sortedTrades.length ? `
+      <div class="card" style="display:flex;justify-content:space-between;">
+        <div><div style="font-size:10px;">Total P&L</div><div class="exact" style="font-size:22px;font-weight:800;" class="${totalPnL>=0?'cg':'cr'}">${totalPnL>=0?'+':'−'}${fmt(totalPnL)}</div></div>
+        <div><div class="pill">${wins}W / ${sortedTrades.length-wins}L</div><div class="pill" style="margin-top:5px;">${Math.round(wins/sortedTrades.length*100)}% WR</div></div>
+      </div>
+      <div class="card">${sortedTrades.map(t=>`<div class="ti"><div class="td ${pnl(t)>=0?'p':'l'}"></div><div class="tinfo"><div><b>${t.Instrument}</b></div><div class="tdate">${new Date(t.Date).toLocaleDateString()}</div>${t.Note?`<div style="font-size:10px;">${t.Note}</div>`:''}</div><div class="tpnl ${pnl(t)>=0?'cg':'cr'}">${pnl(t)>=0?'+':'−'}${fmt(pnl(t))}</div></div>`).join('')}</div>
+    ` : '<div class="empty">No trades in this period</div>';
+    
+    // Render Expenses pane
+    const sortedExpenses = [...filteredExpenses].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+    const totalExpenses = sortedExpenses.reduce((s,e)=>s+(e.Amount||0),0);
+    document.getElementById('expenses-content').innerHTML = sortedExpenses.length ? `
+      <div class="card" style="display:flex;justify-content:space-between;">
+        <div><div style="font-size:10px;">Total Expenses</div><div class="exact" style="font-size:22px;font-weight:800;" class="cr">−${fmt(totalExpenses)}</div></div>
+        <div><div class="pill">${sortedExpenses.length} entries</div></div>
+      </div>
+      <div class="card">${sortedExpenses.map(e=>`<div class="ti"><div class="td l"></div><div class="tinfo"><div><b>${e.Category}</b> ${e.Description?`· ${e.Description}`:''}</div><div class="tdate">${new Date(e.Date).toLocaleDateString()}</div></div><div class="tpnl cr">−${fmt(e.Amount)}</div></div>`).join('')}</div>
+    ` : '<div class="empty">No expenses in this period</div>';
+    
+    document.getElementById('trade-sub').innerText = tradeMonth==='all' ? `All entries` : mlabel(tradeMonth);
+  }
+
+  function setTM(m) { 
+    tradeMonth = m; 
+    renderTradesAndExpenses(); 
+  }
+
+  // ========== ADD ENTRIES ==========
+  async function submitTrade() { 
+    const date=document.getElementById('t-date').value; 
+    const inst=document.getElementById('t-inst').value; 
+    const out=document.getElementById('t-out').value; 
+    const amt=parseFloat(document.getElementById('t-amt').value); 
+    const note=document.getElementById('t-note').value; 
+    if(!date||!inst||!amt) return toast('Fill all fields'); 
+    await apiPost({action:'addTrade',date,instrument:inst,outcome:out,amount:amt,note}); 
+    toast('Trade saved'); 
+    refreshAll(); 
+  }
+  
+  async function submitExpense() { 
+    const date=document.getElementById('e-date').value; 
+    const cat=document.getElementById('e-cat').value; 
+    const amt=parseFloat(document.getElementById('e-amt').value); 
+    const desc=document.getElementById('e-desc').value; 
+    if(!date||!amt) return; 
+    await apiPost({action:'addExpense',date,category:cat,amount:amt,description:desc}); 
+    toast('Expense saved'); 
+    refreshAll(); 
+  }
+  
+  async function submitInvest() { 
+    const date=document.getElementById('i-date').value; 
+    const amt=parseFloat(document.getElementById('i-amt').value); 
+    const note=document.getElementById('i-note').value; 
+    if(!date||!amt) return; 
+    await apiPost({action:'addInvestment',date,amount:amt,note}); 
+    toast('Investment saved'); 
+    refreshAll(); 
+  }
+
+  // ========== EXCEL IMPORT (Import History) ==========
+  async function uploadExcelAndImport() {
+    const fileInput = document.getElementById('excelUpload');
+    const statusDiv = document.getElementById('uploadStatus');
+    const file = fileInput.files[0];
+    if (!file) {
+      statusDiv.innerText = '❌ Please select a file first.';
+      return;
+    }
+    statusDiv.innerText = '📖 Reading Excel file...';
+    
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const trades = [];
+    const expenses = [];
+    const monthlySheets = workbook.SheetNames.filter(name => name.startsWith('📅'));
+    
+    for (const sheetName of monthlySheets) {
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      let inTradeSection = false;
+      let inWithdrawalSection = false;
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.length === 0) continue;
+        const firstCell = (row[0] || '').toString().trim();
+        if (firstCell.includes('TRADE LOG')) {
+          inTradeSection = true;
+          inWithdrawalSection = false;
+          continue;
+        }
+        if (firstCell.includes('WITHDRAWAL LOG')) {
+          inTradeSection = false;
+          inWithdrawalSection = true;
+          continue;
+        }
+        if (inTradeSection && row[0] && row[0].toString().match(/^\d{4}-\d{2}-\d{2}/)) {
+          const date = row[0];
+          const instrument = row[1];
+          let outcome = row[2];
+          let amount = Math.abs(parseFloat(row[3]));
+          if (isNaN(amount)) continue;
+          outcome = outcome.toString().toUpperCase();
+          if (outcome !== 'PROFIT' && outcome !== 'LOSS') continue;
+          trades.push({ date, instrument, outcome, amount, note: "" });
+        }
+        if (inWithdrawalSection && row[0] && row[0].toString().match(/^\d{4}-\d{2}-\d{2}/)) {
+          const date = row[0];
+          let amount = parseFloat(row[1]);
+          const reason = row[2] || "";
+          if (isNaN(amount)) continue;
+          let category = "Other";
+          const r = reason.toLowerCase();
+          if (r.includes("food") || r.includes("mutton") || r.includes("thursday")) category = "Food";
+          else if (r.includes("medical") || r.includes("hospital")) category = "Medical";
+          else if (r.includes("emi") || r.includes("car")) category = "EMI";
+          else if (r.includes("petrol") || r.includes("bike") || r.includes("transport")) category = "Transport";
+          else if (r.includes("trip")) category = "Entertainment";
+          else if (r.includes("birthday") || r.includes("ranjith") || r.includes("family") || r.includes("raj")) category = "Family";
+          else if (r.includes("phone") || r.includes("home") || r.includes("house") || r.includes("nuts")) category = "Other";
+          expenses.push({ date, category, amount, description: reason });
+        }
+      }
+    }
+    
+    // Parse investments from Dashboard sheet if present
+    const dashboardSheet = workbook.Sheets['📊 Dashboard'];
+    let investments = [];
+    if (dashboardSheet) {
+      const dashRows = XLSX.utils.sheet_to_json(dashboardSheet, { header: 1, defval: "" });
+      let startCap = 0, addedCap = 0;
+      for (let i = 0; i < dashRows.length; i++) {
+        const row = dashRows[i];
+        if (row[0] && row[0].toString().includes('STARTING CAPITAL')) {
+          startCap = parseFloat(row[2]) || 0;
+        }
+        if (row[0] && row[0].toString().includes('ADDED INVESTMENT')) {
+          addedCap = parseFloat(row[2]) || 0;
+        }
+      }
+      if (startCap > 0) investments.push({ date: "2026-03-01", amount: startCap, note: "Initial capital" });
+      if (addedCap > 0) investments.push({ date: "2026-04-17", amount: addedCap, note: "From father" });
+    } else {
+      // fallback to your known investments
+      investments = [{ date: "2026-03-01", amount: 184000, note: "Initial capital" }, { date: "2026-04-17", amount: 100000, note: "From father" }];
+    }
+    
+    statusDiv.innerText = `📊 Found ${trades.length} trades, ${expenses.length} expenses, ${investments.length} investments. Importing...`;
+    
+    let successTrades = 0, successExpenses = 0, successInvestments = 0;
+    for (const t of trades) {
+      const res = await apiPost({ action: 'addTrade', date: t.date, instrument: t.instrument, outcome: t.outcome, amount: t.amount, note: t.note });
+      if (res && res.ok) successTrades++;
+    }
+    for (const e of expenses) {
+      const res = await apiPost({ action: 'addExpense', date: e.date, category: e.category, amount: e.amount, description: e.description });
+      if (res && res.ok) successExpenses++;
+    }
+    for (const inv of investments) {
+      const res = await apiPost({ action: 'addInvestment', date: inv.date, amount: inv.amount, note: inv.note });
+      if (res && res.ok) successInvestments++;
+    }
+    
+    statusDiv.innerText = `✅ Import complete! ${successTrades}/${trades.length} trades, ${successExpenses}/${expenses.length} expenses, ${successInvestments}/${investments.length} investments added. Refresh the page to see your data.`;
+    cache = null;
+    toast('Excel import finished!');
+    refreshAll();
+  }
+
+  // ========== UI NAVIGATION ==========
+  function refreshAll() { 
+    cache=null; 
+    renderDash(); 
+    renderMonthly(); 
+    renderTradesAndExpenses(); 
+    toast('Refreshed'); 
+  }
+  
+  function nav(page,btn) { 
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+    document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active')); 
+    document.getElementById('pg-'+page).classList.add('active'); 
+    btn.classList.add('active'); 
+    if(page==='dashboard') renderDash(); 
+    else if(page==='monthly') renderMonthly(); 
+    else if(page==='trades') renderTradesAndExpenses(); 
+    else if(page==='add') { 
+      const today=new Date().toISOString().split('T')[0]; 
+      ['t-date','e-date','i-date'].forEach(id=>{let el=document.getElementById(id); if(el) el.value=today;}); 
+    } else if(page==='settings') {
+      const statusDiv = document.getElementById('api-status');
+      statusDiv.innerHTML = API && API!=='YOUR_APPS_SCRIPT_URL_HERE' ? '✅ Connected to Google Sheets' : '⚠️ Using demo data. Please replace the hardcoded API URL.';
+    }
+  }
+  
+  function switchForm(type,btn) { 
+    ['trade','expense','invest'].forEach(t=>document.getElementById('form-'+t).style.display=t===type?'block':'none'); 
+    document.querySelectorAll('.mtb').forEach(b=>b.classList.remove('active')); 
+    btn.classList.add('active'); 
+  }
+  
+  // Tab switching for Trades vs Expenses view
+  function initTabSwitching() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-tab');
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        panes.forEach(pane => pane.classList.remove('active-pane'));
+        document.getElementById(targetId).classList.add('active-pane');
+      });
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded',()=>{ 
+    renderDash(); 
+    renderMonthly(); 
+    renderTradesAndExpenses(); 
+    initTabSwitching();
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); 
+  });
+</script>
+</body>
+</html>
