@@ -2,223 +2,216 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#f5f5f0">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f172a">
 <title>Groww Tracker (Firebase Live)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
 :root {
-  --bg:      #f0f0eb;
-  --surface: #fafaf7;
-  --card:    #ffffff;
-  --card2:   #f7f7f3;
-  --border:  #e2e2da;
-  --border2: #d0d0c8;
-  --text:    #1a1a18;
-  --text2:   #3a3a36;
-  --muted:   #888880;
-  --muted2:  #b0b0a8;
-  --green:        #1a8a4a;
-  --green-bg:     #e8f5ee;
-  --green-border: #b8dfc8;
-  --green-light:  #d0eddc;
-  --red:        #c0392b;
-  --red-bg:     #fcecea;
-  --red-border: #f0b8b2;
-  --red-light:  #f8d8d5;
-  --blue:        #1e6eb5;
-  --blue-bg:     #e8f1fb;
-  --blue-border: #b8d4f0;
-  --gold:        #b07800;
-  --gold-bg:     #fdf5e0;
-  --gold-border: #f0d888;
-  --purple:        #6b3fcc;
-  --purple-bg:     #f0eafb;
-  --purple-border: #d0b8f0;
-  --teal:        #1a8a88;
-  --teal-bg:     #e5f5f5;
-  --orange:        #c05010;
-  --orange-bg:     #fdf0e8;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --bg: #0f172a;
+  
+  --card: rgba(30, 41, 59, 0.55);
+  --card2: rgba(15, 23, 42, 0.4);
+  --surface: rgba(255, 255, 255, 0.03);
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --border2: rgba(255, 255, 255, 0.15);
+  
+  --text: #f8fafc;
+  --text2: #cbd5e1;
+  --muted: #94a3b8;
+  --muted2: #64748b;
+  
+  --green: #34d399;
+  --green-bg: rgba(52, 211, 153, 0.12);
+  --green-border: rgba(52, 211, 153, 0.3);
+  
+  --red: #f87171;
+  --red-bg: rgba(248, 113, 113, 0.12);
+  --red-border: rgba(248, 113, 113, 0.3);
+  
+  --blue: #60a5fa;
+  --blue-bg: rgba(96, 165, 250, 0.12);
+  --blue-border: rgba(96, 165, 250, 0.3);
+  
   --font-h: 'Inter', sans-serif;
   --font-m: 'JetBrains Mono', monospace;
-  --r: 14px; --rs: 10px; --nav: 60px;
-  --max: 480px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --r: 20px; --rs: 12px; --nav: 64px;
+  
+  /* Laptop Balanced Viewport optimization sizing */
+  --max: 768px;
+  
+  --shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 html, body { height:100%; background:var(--bg); color:var(--text); font-family:var(--font-h); overflow:hidden; -webkit-font-smoothing:antialiased; }
 
-#app { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:var(--max); margin:0 auto; position:relative; }
-
-.page { display:none; flex:1; overflow-y:auto; padding-bottom:calc(var(--nav) + 16px); background:var(--bg); }
-.page.active { display:block; }
-.pi { padding:12px 14px 0; }
-
-/* ── NAV ── */
-nav {
-  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:var(--max);
-  height:var(--nav); background:var(--card); border-top:1px solid var(--border);
-  display:flex; align-items:center; z-index:100;
-  box-shadow:0 -2px 12px rgba(0,0,0,0.06);
+body::before {
+  content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-gradient); z-index: -1;
 }
-.nb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border:none; background:none; cursor:pointer; padding:8px 0; color:var(--muted); font-family:var(--font-h); font-size:9px; font-weight:500; letter-spacing:.04em; transition:color .2s; text-transform:uppercase; }
-.nb.active { color:var(--green); }
-.ni { font-size:18px; transition:transform .15s; }
-.nb.active .ni { transform:translateY(-2px); }
+
+#app { 
+  display:flex; flex-direction:column; 
+  height: 100vh; height: 100dvh; 
+  max-width: var(--max); margin: 0 auto; 
+  position: relative; background: transparent;
+  padding: 0 16px;
+}
+
+.page { display:none; flex:1; overflow-y:auto; padding-bottom:calc(var(--nav) + 32px); padding-top: env(safe-area-inset-top, 0px); }
+.page.active { display:flex; flex-direction:column; }
+.pi { padding:16px 0; width: 100%; }
+
+/* ── NAV FLOATING BAR ── */
+nav {
+  position:fixed; bottom: 16px; left:50%; transform:translateX(-50%);
+  width:calc(100% - 32px); max-width:calc(var(--max) - 32px);
+  height:var(--nav); background:rgba(15, 23, 42, 0.7); 
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border:1px solid var(--border); border-radius:24px;
+  display:flex; align-items:center; z-index:100;
+  box-shadow: var(--shadow-md);
+}
+.nb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border:none; background:none; cursor:pointer; padding:8px 0; color:var(--muted); font-family:var(--font-h); font-size:11px; font-weight:600; letter-spacing:.02em; transition:all .25s ease; text-transform:capitalize; }
+.nb.active { color:var(--green); transform: translateY(-1px); }
+.ni { font-size:18px; transition:transform .2s ease; opacity: 0.6; }
+.nb.active .ni { transform:scale(1.1); opacity: 1; }
 
 /* ── HEADER ── */
-.ph { padding:20px 14px 8px; display:flex; align-items:center; justify-content:space-between; }
-.pt { font-size:22px; font-weight:800; color:var(--text); letter-spacing:-.02em; }
-.ps { font-size:11px; color:var(--muted); margin-top:2px; }
+.ph { padding:24px 0 12px; display:flex; align-items:center; justify-content:space-between; width:100%; }
+.pt { font-size:24px; font-weight:800; color:#fff; letter-spacing:-.03em; }
+.ps { font-size:12px; color:var(--muted); margin-top:2px; font-weight:500; }
 
-/* ── HERO ── */
-.hero { background:var(--green); border-radius:var(--r); padding:20px 16px; margin-bottom:10px; position:relative; overflow:hidden; text-align: center; }
-.hero::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.08); border-radius:50%; pointer-events:none; }
-.hero::after { content:''; position:absolute; bottom:-30px; left:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; pointer-events:none; }
-.hero-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.7); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; }
-.hero-val { font-size:38px; font-weight:800; color:#fff; letter-spacing:-.03em; line-height:1; font-family:var(--font-h); }
-.hero-sub { font-size:12px; color:rgba(255,255,255,0.8); margin-top:8px; font-weight:500; }
-.hero-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.2); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; color:#fff; margin-top:8px; }
+/* ── HIGH PROMINENCE NET RETURNS HERO ── */
+.hero-prominent { 
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(30, 41, 59, 0.4) 100%);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(52, 211, 153, 0.4);
+  border-radius: var(--r); padding: 26px 16px; margin-bottom: 14px; position: relative; overflow: hidden; text-align: center;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15); width: 100%;
+}
+.hero-prominent.loss-state {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(30, 41, 59, 0.4) 100%);
+  border-color: rgba(248, 113, 113, 0.35);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.1);
+}
 
-/* ── KPI GRID ── */
-.kg { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
-.kpi { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
-.kpi-l { font-size:9px; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px; }
-.kpi-v { font-size:20px; font-weight:800; letter-spacing:-.02em; font-family:var(--font-h); }
-.kpi-s { font-size:10px; margin-top:3px; color:var(--muted); font-weight:400; }
+/* ── HERO STANDARDS ── */
+.hero { 
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--r); padding:20px 16px; margin-bottom: 14px; text-align: center;
+  box-shadow: var(--shadow); width: 100%;
+}
+.hero-label { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; opacity: 0.85; }
+.hero-val { font-size:42px; font-weight:800; color:#fff; letter-spacing:-.03em; line-height:1; font-family:var(--font-h); text-shadow: 0 2px 12px rgba(0,0,0,0.25); }
+.hero-sub { font-size:13px; color:var(--text2); margin-top:10px; font-weight:500; }
+
+/* ── KPI GRIDS (Responsive Two-Column Matrix Layout System) ── */
+.kg { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; width: 100%; }
+.kpi { 
+  background:var(--card); 
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border:1px solid var(--border); border-radius:var(--r); padding:16px 14px; box-shadow:var(--shadow); 
+}
+.kpi-l { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:6px; }
+.kpi-v { font-size:22px; font-weight:800; letter-spacing:-.02em; font-family:var(--font-h); }
 
 /* ── STAT ROW ── */
-.sr { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
-.sc { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:11px 8px; text-align:center; box-shadow:var(--shadow); }
-.sv { font-size:18px; font-weight:800; font-family:var(--font-h); letter-spacing:-.02em; }
-.sl { font-size:9px; font-weight:600; color:var(--muted); margin-top:3px; letter-spacing:.06em; text-transform:uppercase; }
+.sr { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; width: 100%; }
+.sc { 
+  background:var(--card); 
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border:1px solid var(--border); border-radius:var(--rs); padding:14px 8px; text-align:center; box-shadow:var(--shadow); 
+}
+.sv { font-size:22px; font-weight:800; font-family:var(--font-h); letter-spacing:-.02em; }
+.sl { font-size:11px; font-weight:600; color:var(--muted); margin-top:4px; letter-spacing:.04em; text-transform:uppercase; }
 
-/* ── SECTION LABEL ── */
-.sl2 { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin:18px 0 9px; padding-bottom:6px; border-bottom:2px solid var(--border); }
+.sl2 { font-size:11px; font-weight:800; color:var(--text2); letter-spacing:.08em; text-transform:uppercase; margin:24px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--border); opacity: 0.9; width: 100%; }
+.card { 
+  background:var(--card); 
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border:1px solid var(--border); border-radius:var(--r); padding:18px; margin-bottom:14px; box-shadow:var(--shadow); width: 100%;
+}
 
-/* ── CARD ── */
-.card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:14px; margin-bottom:10px; box-shadow:var(--shadow); }
-
-/* ── SUMMARY ROW ── */
-.sum-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); }
+/* ── SUMMARY ENTRIES ROWS ── */
+.sum-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); }
 .sum-row:last-child { border-bottom:none; padding-bottom:0; }
 .sum-row:first-child { padding-top:0; }
-.sum-label { font-size:12px; font-weight:500; color:var(--text2); }
-.sum-sub { font-size:10px; color:var(--muted); margin-top:1px; }
-.sum-val { font-size:13px; font-weight:700; font-family:var(--font-m); letter-spacing:-.01em; }
+.sum-label { font-size:14px; font-weight:600; color:#fff; }
+.sum-sub { font-size:12px; color:var(--muted); margin-top:2px; font-weight:500; }
+.sum-val { font-size:14px; font-weight:700; font-family:var(--font-m); letter-spacing:-.01em; }
 
-/* ── TRADE ITEM ── */
-.ti { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--border); }
+.ti { display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid var(--border); }
 .ti:last-child { border-bottom:none; }
-.td { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.td.p { background:var(--green); }
-.td.l { background:var(--red); }
+.td { width:10px; height:10px; border-radius:50%; flex-shrink:0; box-shadow: 0 0 8px currentColor; }
+.td.p { background:var(--green); color: var(--green); }
+.td.l { background:var(--red); color: var(--red); }
 .tinfo { flex:1; min-width:0; }
-.tname { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.tdate { font-size:10px; color:var(--muted); margin-top:1px; font-family:var(--font-m); }
-.tnote { font-size:10px; color:var(--muted2); margin-top:1px; font-style:italic; }
-.tpnl { font-family:var(--font-m); font-size:13px; font-weight:600; flex-shrink:0; }
+.tname { font-size:14px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tdate { font-size:11px; color:var(--muted); margin-top:2px; font-family:var(--font-m); font-weight:500; }
+.tpnl { font-family:var(--font-m); font-size:14px; font-weight:700; flex-shrink:0; }
 
-/* ── ACTIONS DISPLAY UTILITY ── */
-.t-mutations { font-size:11px; font-weight:600; display:flex; gap:8px; margin-top:4px; }
-.t-edit { color: var(--blue); cursor: pointer; }
-.t-del { color: var(--red); cursor: pointer; }
+.t-mutations { font-size:11px; font-weight:700; display:flex; gap:12px; margin-top:6px; }
+.t-edit { color: var(--blue); cursor: pointer; opacity: 0.8; }
+.t-del { color: var(--red); cursor: pointer; opacity: 0.8; }
 
-/* ── BAR CHART ── */
-.bc { display:flex; flex-direction:column; gap:10px; }
-.br { display:flex; align-items:center; gap:8px; }
-.bl { font-size:10px; font-weight:500; color:var(--muted); width:66px; flex-shrink:0; text-align:right; }
-.bt { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
-.bf { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
-.bn { font-size:10px; font-family:var(--font-m); font-weight:500; width:68px; flex-shrink:0; text-align:right; }
-
-/* ── DUAL BAR ── */
-.dbar-row { margin-bottom:14px; }
+/* ── COMPONENT DUAL TRACK BARS ── */
+.dbar-row { margin-bottom:16px; }
 .dbar-row:last-child { margin-bottom:0; }
-.dbar-top { display:flex; justify-content:space-between; font-size:11px; font-weight:600; margin-bottom:4px; }
-.dbar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:3px; }
-.dbar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
-.dbar-sub { display:flex; justify-content:space-between; font-size:10px; font-weight:500; }
+.dbar-top { display:flex; justify-content:space-between; font-size:12px; font-weight:600; margin-bottom:6px; color:#fff; }
+.dbar-track { height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; margin-bottom:4px; border:1px solid rgba(255,255,255,0.02); }
+.dbar-fill { height:100%; border-radius:4px; transition:width 1s cubic-bezier(.23,1,.32,1); }
 
-/* ── FORMS ── */
-.fg { margin-bottom:12px; }
-.fl { font-size:10px; font-weight:600; color:var(--text2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; display:block; }
-.fi, .fs { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:var(--rs); color:var(--text); font-family:var(--font-h); font-size:14px; font-weight:500; padding:11px 13px; outline:none; transition:border-color .2s; -webkit-appearance:none; appearance:none; }
-.fi:focus, .fs:focus { border-color:var(--green); box-shadow:0 0 0 3px var(--green-bg); }
-.fs { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%23888880'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; }
-.fr2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.btn { width:100%; padding:13px; border-radius:var(--rs); border:none; cursor:pointer; font-family:var(--font-h); font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .15s; text-transform:uppercase; box-shadow:var(--shadow); }
-.btn:active { transform:scale(.98); }
-.btn-g { background:var(--green); color:#fff; }
-.btn-r { background:var(--red); color:#fff; }
-.btn-b { background:var(--blue); color:#fff; }
-.btn-ghost { background:transparent; border:1.5px solid var(--border2); color:var(--muted); box-shadow:none; }
-.btn-sm { padding:8px 14px; font-size:11px; width:auto; }
-.btn-xs { padding:5px 10px; font-size:10px; width:auto; border-radius:6px; }
+/* ── FORMS LAYOUT CONFIGS ── */
+.fg { margin-bottom:14px; }
+.fl { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; display:block; opacity: 0.9; }
+.fi, .fs { width:100%; background:rgba(15, 23, 42, 0.4); border:1px solid var(--border); border-radius:var(--rs); color:#fff; font-family:var(--font-h); font-size:14px; font-weight:500; padding:12px 14px; outline:none; transition:all .25s ease; }
+.fi:focus, .fs:focus { border-color:var(--blue); background:rgba(15, 23, 42, 0.6); box-shadow:0 0 0 3px rgba(96, 165, 250, 0.15); }
+.fs { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%2394a3b8'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:34px; }
+.fr2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.btn { width:100%; padding:14px; border-radius:var(--rs); border:none; cursor:pointer; font-family:var(--font-h); font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .2s ease; text-transform:uppercase; box-shadow:var(--shadow); }
+.btn:active { transform:scale(.97); }
+.btn-g { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2); }
+.btn-r { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color:#fff; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2); }
+.btn-b { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color:#fff; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2); }
+.btn-ghost { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:#fff; box-shadow:none; backdrop-filter: blur(4px); }
+.btn-sm { padding:8px 14px; font-size:11px; width:auto; border-radius:20px; }
+.btn-xs { padding:6px 12px; font-size:11px; width:auto; border-radius:20px; font-weight: 600; }
 
-/* ── TOGGLE ── */
-.tr { display:flex; border:1.5px solid var(--border); border-radius:var(--rs); overflow:hidden; margin-bottom:14px; background:var(--card2); }
-.tb { flex:1; padding:9px 4px; background:transparent; border:none; color:var(--muted); font-family:var(--font-h); font-size:10px; font-weight:600; cursor:pointer; transition:all .2s; letter-spacing:.02em; }
-.tb.active { background:var(--green); color:#fff; border-radius:calc(var(--rs) - 1px); }
+.tr { display:flex; border:1px solid var(--border); border-radius:var(--rs); overflow:hidden; margin-bottom:18px; background:var(--card2); padding: 3px; width: 100%; }
+.tb { flex:1; padding:10px 4px; background:transparent; border:none; color:var(--muted); font-family:var(--font-h); font-size:11px; font-weight:700; cursor:pointer; transition:all .2s ease; letter-spacing:.02em; border-radius:9px; }
+.tb.active { background:var(--card); color:#fff; border:1px solid var(--border); box-shadow: var(--shadow); }
 
-/* ── MONTH TABS ── */
-.mt { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; margin-bottom:12px; }
+/* ── HORIZONTAL SCROLL SLIDERS ── */
+.mt { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; margin-bottom:14px; width: 100%; }
 .mt::-webkit-scrollbar { display:none; }
-.mtb { flex-shrink:0; padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--muted); font-family:var(--font-h); font-size:11px; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; box-shadow:var(--shadow); }
-.mtb.active { background:var(--green); border-color:var(--green); color:#fff; }
+.mtb { flex-shrink:0; padding:8px 16px; border-radius:20px; border:1px solid var(--border); background:var(--card); color:var(--muted); font-family:var(--font-h); font-size:12px; font-weight:600; cursor:pointer; transition:all .2s ease; white-space:nowrap; box-shadow:var(--shadow); }
+.mtb.active { background:#fff; border-color:#fff; color:#0f172a; font-weight: 700; }
 
-/* ── TOAST ── */
-#toast { position:fixed; bottom:calc(var(--nav) + 14px); left:50%; transform:translateX(-50%) translateY(16px); background:var(--text); color:var(--card); border-radius:24px; padding:9px 18px; font-size:12px; font-weight:500; z-index:500; opacity:0; pointer-events:none; transition:all .3s; white-space:nowrap; font-family:var(--font-h); }
+#toast { position:fixed; bottom:calc(var(--nav) + 32px); left:50%; transform:translateX(-50%) translateY(16px); background:#fff; color:#0f172a; border-radius:16px; padding:12px 24px; font-size:13px; font-weight:700; z-index:500; opacity:0; pointer-events:none; transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space:nowrap; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
 #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ── LOADER ── */
-.loader { display:flex; align-items:center; justify-content:center; padding:40px; }
-.spin { width:22px; height:22px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; }
+.loader { display:flex; align-items:center; justify-content:center; padding:40px; width: 100%; }
+.spin { width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
+.empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; font-weight:500; width: 100%; }
 
-/* ── EMPTY ── */
-.empty { text-align:center; padding:36px 20px; color:var(--muted); font-size:12px; }
-.ei { font-size:32px; margin-bottom:10px; }
+.cg { color:var(--green) !important; }
+.cr { color:var(--red) !important; }
+.cb { color:var(--blue) !important; }
+.cm { color:var(--muted) !important; }
 
-/* ── GOAL BAR ── */
-.gbt { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin:8px 0 5px; }
-.gbf { height:100%; border-radius:4px; background:var(--green); transition:width 1s cubic-bezier(.23,1,.32,1); }
-
-/* ── BADGES ── */
-.badge { display:inline-block; font-size:9px; font-weight:600; padding:2px 8px; border-radius:10px; letter-spacing:.04em; }
-.b-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
-.b-red { background:var(--red-bg); color:var(--red); border:1px solid var(--red-border); }
-.b-blue { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
-.b-gold { background:var(--gold-bg); color:var(--gold); border:1px solid var(--gold-border); }
-.b-purple { background:var(--purple-bg); color:var(--purple); border:1px solid var(--purple-border); }
-
-/* ── COLORS ── */
-.cg{color:var(--green)}.cr{color:var(--red)}.cb{color:var(--blue)}.cgo{color:var(--gold)}.cp{color:var(--purple)}.ct{color:var(--teal)}.co{color:var(--orange)}.cm{color:var(--muted)}
-
-/* ── BEST/WORST ── */
-.bw-card { border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
-.bw-green { background:var(--green-bg); border:1px solid var(--green-border); }
-.bw-red { background:var(--red-bg); border:1px solid var(--red-border); }
-
-/* ── INSIGHT ── */
-.insight { background:var(--gold-bg); border:1px solid var(--gold-border); border-left:3px solid var(--gold); border-radius:var(--rs); padding:10px 12px; margin-bottom:8px; font-size:11px; font-weight:500; color:var(--text2); line-height:1.6; text-align: left; }
-.insight strong { color:var(--gold); }
-
-/* ── SETUP ── */
-.step { display:flex; gap:12px; margin-bottom:18px; }
-.sn { width:26px; height:26px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green); color:var(--green); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
-.sb { flex:1; }
-.st { font-size:13px; font-weight:700; margin-bottom:3px; color:var(--text); }
-.sd { font-size:11px; color:var(--muted); line-height:1.7; }
-.divider { height:1px; background:var(--border); margin:10px 0; }
-.exact { font-family:var(--font-m); }
-.pill { display:inline-flex; align-items:center; background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:3px 10px; font-size:10px; font-weight:600; color:var(--text2); gap:4px; }
+.insight { background:rgba(52, 211, 153, 0.04); border:1px solid rgba(52, 211, 153, 0.15); border-left:4px solid var(--green); border-radius:var(--rs); padding:12px 14px; margin-bottom:12px; font-size:12px; font-weight:500; color:var(--text2); line-height:1.6; text-align: left; width: 100%; }
+.insight strong { color:#fff; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -228,15 +221,15 @@ nav {
     <div class="ph">
       <div><div class="pt">Dashboard</div><div class="ps" id="dash-ts">Loading…</div></div>
       <div style="display:flex; gap:6px;">
-         <button class="btn-ghost btn btn-xs" id="export-btn" style="font-size:12px;padding:6px 12px;width:auto">📥 Export CSV</button>
-         <button class="btn-ghost btn btn-xs" id="refresh-btn" style="font-size:12px;padding:6px 12px;width:auto">↻ Refresh</button>
+         <button class="btn-ghost btn btn-xs" id="export-btn">📥 Export CSV</button>
+         <button class="btn-ghost btn btn-xs" id="refresh-btn">↻ Refresh</button>
       </div>
     </div>
     <div class="pi" id="dash-content"><div class="loader"><div class="spin"></div></div></div>
   </div>
 
   <div class="page" id="pg-monthly">
-    <div class="ph"><div><div class="pt">Monthly</div><div class="ps">Tap a month to explore</div></div></div>
+    <div class="ph"><div><div class="pt">Monthly Summary</div><div class="ps">Explore monthly data matrices</div></div></div>
     <div class="pi" id="monthly-content"><div class="loader"><div class="spin"></div></div></div>
   </div>
 
@@ -317,8 +310,8 @@ nav {
     <div class="pi">
       <div class="card">
         <div class="kpi-l" style="margin-bottom:6px">Database Link Status</div>
-        <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:10px;">🟢 Live Firestore DB Connected</div>
-        <div style="font-size:11px;color:var(--muted);line-height:1.6">Your application is permanently linked to your personal cluster setup. Data loads directly from your live instance.</div>
+        <div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:10px;">🟢 Live Firestore DB Connected</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;opacity:0.85;">Your application is permanently linked to your personal cloud container. Data operations transmit securely to your live instance node infrastructure.</div>
       </div>
     </div>
   </div>
@@ -350,11 +343,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// LOCAL MEMORY STATE Cache
 let cache = { trades: [], expenses: [], investments: [], goals: [] };
 let tradeMonth = 'all';
+let mSubToggleState = 'trades'; 
+let activeMonthlyTab = ""; 
 
-// GLOBAL UTILITIES
 const fmt = n => '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
 const mkey = s => { const d=new Date(s); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
 const mlabel = k => { const [y,m]=k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+y; };
@@ -372,7 +365,6 @@ function toast(msg) {
   setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-// ROUTING ARCHITECTURE
 function navigateTo(pageId, targetBtn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
@@ -380,12 +372,11 @@ function navigateTo(pageId, targetBtn) {
   targetBtn.classList.add('active');
   
   if (pageId === 'dashboard') renderDash();
-  else if (pageId === 'monthly') renderMonthly();
+  else if (pageId === 'monthly') renderMonthly(activeMonthlyTab);
   else if (pageId === 'trades') renderTrades();
   else if (pageId === 'add') initAddForms();
 }
 
-// INLINE CLOUD DATA MUTATIONS (EDIT / DELETE)
 window.editRecord = async function(type, id) {
   if (type === 'trade') {
     let t = cache.trades.find(x => x.id === id);
@@ -398,30 +389,29 @@ window.editRecord = async function(type, id) {
   } else {
     let e = cache.expenses.find(x => x.id === id);
     let newAmt = prompt(`Edit Expense Amount for ${e.Description} on ${e.Date}:`, e.Amount);
-    let newDesc = prompt(`Edit Description:`, e.Description);
+    let newDesc = prompt(`Edit Description Label:`, e.Description);
     if (newAmt !== null && !isNaN(parseFloat(newAmt)) && newDesc) {
       await updateDoc(doc(db, "withdrawals", id), { Amount: parseFloat(newAmt), Description: newDesc });
-      toast("Expense Updated!");
+      toast("Expense Log Modified!");
     }
   }
   await fetchCloudData();
-  renderMonthly();
+  renderMonthly(activeMonthlyTab);
 };
 
 window.deleteRecord = async function(type, id) {
-  if (confirm("Permanently delete this entry from your database?")) {
+  if (confirm("Permanently strip this data entry line from your database?")) {
     if (type === 'trade') {
       await deleteDoc(doc(db, "trades", id));
     } else {
       await deleteDoc(doc(db, "withdrawals", id));
     }
-    toast("Entry Deleted Contextually ✓");
+    toast("Entry Purged.");
     await fetchCloudData();
-    renderMonthly();
+    renderMonthly(activeMonthlyTab);
   }
 };
 
-// DATABASE LAYER: FETCH FROM FIREBASE
 async function fetchCloudData() {
   try {
     const tSnap = await getDocs(collection(db, "trades"));
@@ -435,7 +425,7 @@ async function fetchCloudData() {
     tSnap.forEach(docSnap => { 
       if(docSnap.data().Date) {
         let record = docSnap.data();
-        record.id = docSnap.id; // Map Document Reference ID
+        record.id = docSnap.id;
         cache.trades.push(record); 
       }
     });
@@ -447,17 +437,19 @@ async function fetchCloudData() {
       }
     });
 
-    // Unified baseline structure settings fallback
     cache.investments = [{Date:'2026-03-01',Amount:184000,Note:'Initial capital'}, {Date:'2026-04-17',Amount:100000,Note:'Added from father'}];
     cache.goals = [{Name:'Reach ₹5L portfolio', Target:500000, Date:'2026-12-31', Note:'Year-end target'}];
 
+    if (!activeMonthlyTab && cache.trades.length > 0) {
+        const newest = [...cache.trades].sort((a,b) => new Date(b.Date) - new Date(a.Date))[0];
+        activeMonthlyTab = newest.Date.substring(0, 7);
+    }
   } catch(e) {
     console.error(e);
-    toast("Database synchronization layer break.");
+    toast("Database sync loop failed.");
   }
 }
 
-// ── RENDER ENGINE: DASHBOARD ──
 function renderDash() {
   const d = cache;
   const inv   = d.investments.reduce((s,i)=>s+(parseFloat(i.Amount)||0),0);
@@ -468,6 +460,14 @@ function renderDash() {
   const wins  = d.trades.filter(t=>t.Outcome==='PROFIT').length;
   const losses= d.trades.filter(t=>t.Outcome==='LOSS').length;
   const wr    = d.trades.length ? Math.round(wins/d.trades.length*100) : 0;
+
+  let totalProfitsGained = 0;
+  let totalLossesSustained = 0;
+  d.trades.forEach(t => {
+    let tradeValue = pnl(t);
+    if (tradeValue >= 0) totalProfitsGained += tradeValue;
+    else totalLossesSustained += Math.abs(tradeValue);
+  });
 
   const trByM = byMonth(d.trades), exByM = byMonth(d.expenses);
   const months = [...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort();
@@ -481,31 +481,44 @@ function renderDash() {
   const maxAll = Math.max(...mRows.map(r=>Math.max(r.mg,r.me)),1);
   const streak = calcStreak(d.trades);
 
+  let prominenceHtml = `
+    <div class="hero-prominent ${net >= 0 ? '' : 'loss-state'}">
+      <div class="hero-label">Net Returns Focus</div>
+      <div class="hero-val" style="color: ${net >= 0 ? 'var(--green)' : 'var(--red)'};">${fmt(net)}</div>
+      <div class="hero-sub">Adjusted growth index parameters</div>
+    </div>
+  `;
+
   document.getElementById('dash-content').innerHTML = `
     <div class="hero">
       <div class="hero-label">Total Portfolio Value</div>
       <div class="hero-val">${fmt(bal)}</div>
-      <div class="hero-sub">${net>=0?'▲':'▼'} ${fmt(net)} net profit</div>
-      <div style="display:flex;gap:8px;margin-top:10px;justify-content:center">
-        <div class="hero-badge">📈 ${d.trades.length} trades</div>
-        <div class="hero-badge">${wr}% win rate</div>
-      </div>
     </div>
 
     <div class="kg">
       <div class="kpi"><div class="kpi-l">Total Invested</div><div class="kpi-v cb exact">${fmt(inv)}</div></div>
+      <div class="kpi"><div class="kpi-l">Win Percentage</div><div class="kpi-v cb exact">${wr}%</div></div>
+    </div>
+
+    <div class="kg">
+      <div class="kpi"><div class="kpi-l">Total Profit (Wins)</div><div class="kpi-v cg exact">${fmt(totalProfitsGained)}</div></div>
+      <div class="kpi"><div class="kpi-l">Total Losses</div><div class="kpi-v cr exact">${fmt(totalLossesSustained)}</div></div>
+    </div>
+
+    <div class="kg">
       <div class="kpi"><div class="kpi-l">Gross Profit</div><div class="kpi-v cg exact">${fmt(gross)}</div></div>
       <div class="kpi"><div class="kpi-l">Total Expenses</div><div class="kpi-v cr exact">${fmt(exp)}</div></div>
-      <div class="kpi"><div class="kpi-l">Net Profit</div><div class="kpi-v ${net>=0?'cg':'cr'} exact">${fmt(net)}</div></div>
     </div>
+
+    ${prominenceHtml}
 
     <div class="sr">
       <div class="sc"><div class="sv cg">${wins}</div><div class="sl">Wins</div></div>
       <div class="sc"><div class="sv cr">${losses}</div><div class="sl">Losses</div></div>
-      <div class="sc"><div class="sv cp">${wr}%</div><div class="sl">Win Rate</div></div>
+      <div class="sc"><div class="sv cb">${wr}%</div><div class="sl">Win Rate</div></div>
     </div>
 
-    ${streak>1?`<div class="insight"><strong>🔥 ${streak}-trade win streak</strong> — great momentum, stay disciplined.</div>`:''}
+    ${streak>1?`<div class="insight"><strong>🔥 ${streak}-trade win streak</strong> — structural momentum active.</div>`:''}
 
     <div class="sl2">Monthly Summary — Exact Figures</div>
     <div class="card">
@@ -539,7 +552,11 @@ function calcStreak(trades) {
   let s=0; for(const t of sorted){if(t.Outcome==='PROFIT')s++;else break;} return s;
 }
 
-// ── RENDER ENGINE: MONTHLY ──
+window.switchMonthlySubView = function(viewType) {
+  mSubToggleState = viewType;
+  renderMonthly(activeMonthlyTab);
+};
+
 function renderMonthly(selectedMonth = null) {
   const d = cache;
   const trByM=byMonth(d.trades), exByM=byMonth(d.expenses);
@@ -549,12 +566,58 @@ function renderMonthly(selectedMonth = null) {
     document.getElementById('monthly-content').innerHTML='<div class="empty">No active transactions found</div>';
     return;
   }
+  
   const m = selectedMonth || months[0];
+  activeMonthlyTab = m; 
+  
   const mTs=trByM[m]||[], mEs=exByM[m]||[];
-
   const mg=mTs.reduce((s,t)=>s+pnl(t),0), me=mEs.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0), mn=mg-me;
 
   window.selectMonthFilter = (target) => renderMonthly(target);
+
+  const sortedTradesLatest = [...mTs].sort((a, b) => new Date(b.Date) - new Date(a.Date));
+
+  let structuralSubTableHtml = "";
+  if (mSubToggleState === 'trades') {
+    structuralSubTableHtml = `
+      <div class="sl2">Trades Tab Matrix Layout</div>
+      <div class="card">
+        ${sortedTradesLatest.length === 0 ? '<div class="empty">No trades documented.</div>' : sortedTradesLatest.map(t => {
+           let p = pnl(t);
+           return `<div class="sum-row">
+             <div>
+               <div class="sum-label" style="font-weight:600;">${t.Instrument}</div>
+               <div class="sum-sub">${t.Date} <span class="cm">· ${t.Outcome}</span></div>
+               <div class="t-mutations">
+                 <span class="t-edit" onclick="editRecord('trade', '${t.id}')">Edit</span>
+                 <span class="t-del" onclick="deleteRecord('trade', '${t.id}')">Delete</span>
+               </div>
+             </div>
+             <div class="sum-val ${p >= 0 ? 'cg' : 'cr'} exact">${p >= 0 ? '+' : ''}${fmt(p)}</div>
+           </div>`;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    structuralSubTableHtml = `
+      <div class="sl2">Expenses Tab Matrix Layout</div>
+      <div class="card">
+        ${mEs.length === 0 ? '<div class="empty">No expenses reported.</div>' : mEs.map(e => {
+           return `<div class="sum-row">
+             <div>
+               <div class="sum-label" style="font-weight:600;">${e.Description}</div>
+               <div class="sum-sub">${e.Date} <span class="cm">· ${e.Category}</span></div>
+               <div class="t-mutations">
+                 <span class="t-edit" onclick="editRecord('expense', '${e.id}')">Edit</span>
+                 <span class="t-del" onclick="deleteRecord('expense', '${e.id}')">Delete</span>
+               </div>
+             </div>
+             <div class="sum-val cr exact">${fmt(e.Amount)}</div>
+         </div>`;
+        }).join('')}
+      </div>
+    `;
+  }
 
   document.getElementById('monthly-content').innerHTML = `
     <div class="mt">${months.map(mo=>`<button class="mtb ${mo===m?'active':''}" onclick="selectMonthFilter('${mo}')">${mlabel(mo)}</button>`).join('')}</div>
@@ -562,46 +625,21 @@ function renderMonthly(selectedMonth = null) {
       <div class="sum-row"><div><div class="sum-label">Gross Profit</div></div><div class="sum-val cg exact">${fmt(mg)}</div></div>
       <div class="sum-row"><div><div class="sum-label">Total Expenses</div></div><div class="sum-val cr exact">${fmt(me)}</div></div>
       <div class="sum-row"><div><div class="sum-label">Net Return</div></div><div class="sum-val ${mn>=0?'cg':'cr'} exact">${fmt(mn)}</div></div>
+      <div class="sum-row" style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 12px; margin-top: 4px;">
+         <div><div class="sum-label" style="color: var(--blue);">No of Trades</div></div>
+         <div class="sum-val cb exact" style="font-size:15px;">${mTs.length} Sessions</div>
+      </div>
     </div>
     
-    <div class="sl2">Trades List Context</div>
-    <div class="card">
-      ${mTs.length === 0 ? '<div class="empty">No trades this month.</div>' : mTs.map(t => {
-         let p = pnl(t);
-         return `<div class="sum-row">
-           <div>
-             <div class="sum-label" style="font-weight:600;">${t.Instrument}</div>
-             <div class="sum-sub">${t.Date} <span class="cm">· ${t.Outcome}</span></div>
-             <div class="t-mutations">
-               <span class="t-edit" onclick="editRecord('trade', '${t.id}')">Edit</span>
-               <span class="t-del" onclick="deleteRecord('trade', '${t.id}')">Delete</span>
-             </div>
-           </div>
-           <div class="sum-val ${p >= 0 ? 'cg' : 'cr'} exact">${p >= 0 ? '+' : ''}${fmt(p)}</div>
-         </div>`;
-      }).join('')}
+    <div class="tr" style="margin-top: 20px;">
+       <button class="tb ${mSubToggleState === 'trades' ? 'active' : ''}" onclick="switchMonthlySubView('trades')">📊 Month Trades (${mTs.length})</button>
+       <button class="tb ${mSubToggleState === 'expenses' ? 'active' : ''}" onclick="switchMonthlySubView('expenses')">💸 Month Expenses (${mEs.length})</button>
     </div>
 
-    <div class="sl2">Expenses List Context</div>
-    <div class="card">
-      ${mEs.length === 0 ? '<div class="empty">No expenses reported.</div>' : mEs.map(e => {
-         return `<div class="sum-row">
-           <div>
-             <div class="sum-label" style="font-weight:600;">${e.Description}</div>
-             <div class="sum-sub">${e.Date} <span class="cm">· ${e.Category}</span></div>
-             <div class="t-mutations">
-               <span class="t-edit" onclick="editRecord('expense', '${e.id}')">Edit</span>
-               <span class="t-del" onclick="deleteRecord('expense', '${e.id}')">Delete</span>
-             </div>
-           </div>
-           <div class="sum-val cr exact">${fmt(e.Amount)}</div>
-         </div>`;
-      }).join('')}
-    </div>
+    ${structuralSubTableHtml}
   `;
 }
 
-// ── RENDER ENGINE: TRADES VIEW ──
 function renderTrades() {
   const d = cache;
   const trByM=byMonth(d.trades);
@@ -637,7 +675,6 @@ function renderTrades() {
   `;
 }
 
-// FORM PRESENTATION CONTROLS
 function initAddForms() {
   const t = new Date().toISOString().split('T')[0];
   document.getElementById('t-date').value = t;
@@ -655,29 +692,27 @@ document.getElementById('t-inst').addEventListener('change', function() {
   document.getElementById('t-other-g').style.display = this.value==='Other' ? 'block' : 'none';
 });
 
-// CSV COMPILE CONTEXT DATA EXPORTER
 document.getElementById('export-btn').addEventListener('click', function() {
-  if (cache.trades.length === 0 && cache.expenses.length === 0) { alert("No transaction rows logged inside cache."); return; }
+  if (cache.trades.length === 0 && cache.expenses.length === 0) { alert("No transaction rows logged inside cache components."); return; }
   
-  let csvRows = "data:text/csv;charset=utf-8,TYPE,DATE,INSTRUMENT_DESCRIPTION,OUTCOME_CATEGORY,AMOUNT\n";
+  let csvContent = "data:text/csv;charset=utf-8,TYPE,DATE,INSTRUMENT_DESCRIPTION,OUTCOME_CATEGORY,AMOUNT\n";
   cache.trades.forEach(t => {
-    csvRows += `TRADE,${t.Date},"${t.Instrument}",${t.Outcome},${t.Amount}\n`;
+    csvContent += `TRADE,${t.Date},"${t.Instrument}",${t.Outcome},${t.Amount}\n`;
   });
   cache.expenses.forEach(e => {
-    csvRows += `EXPENSE,${e.Date},"${e.Description}",${e.Category},${e.Amount}\n`;
+    csvContent += `EXPENSE,${e.Date},"${e.Description}",${e.Category},${e.Amount}\n`;
   });
 
-  const encodedUri = encodeURI(csvRows);
-  const anchor = document.createElement("a");
-  anchor.setAttribute("href", encodedUri);
-  anchor.setAttribute("download", `Groww_CloudLedger_Export.csv`);
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
+  const encodedUri = encodeURI(csvContent);
+  const anchorLink = document.createElement("a");
+  anchorLink.setAttribute("href", encodedUri);
+  anchorLink.setAttribute("download", `Groww_Ledger_Export.csv`);
+  document.body.appendChild(anchorLink);
+  anchorLink.click();
+  document.body.removeChild(anchorLink);
   toast("CSV Export Downloaded ✓");
 });
 
-// SUBMIT OPERATIONS -> SENT DIRECTLY TO FIREBASE
 document.getElementById('submit-trade-btn').addEventListener('click', async function() {
   const inst = document.getElementById('t-inst').value==='Other' ? document.getElementById('t-other').value : document.getElementById('t-inst').value;
   const data = {
@@ -695,6 +730,7 @@ document.getElementById('submit-trade-btn').addEventListener('click', async func
   this.innerText = '+ Add Trade';
   document.getElementById('t-amt').value = '';
   await fetchCloudData();
+  renderDash();
 });
 
 document.getElementById('submit-expense-btn').addEventListener('click', async function() {
@@ -712,6 +748,7 @@ document.getElementById('submit-expense-btn').addEventListener('click', async fu
   this.innerText = '+ Add Expense';
   document.getElementById('e-amt').value = '';
   await fetchCloudData();
+  renderDash();
 });
 
 document.getElementById('refresh-btn').addEventListener('click', async () => {
@@ -720,14 +757,12 @@ document.getElementById('refresh-btn').addEventListener('click', async () => {
   toast('Cloud Sync Complete');
 });
 
-// NAVIGATION WIRING
 document.getElementById('nav-dash').addEventListener('click', function() { navigateTo('dashboard', this); });
 document.getElementById('nav-monthly').addEventListener('click', function() { navigateTo('monthly', this); });
 document.getElementById('nav-trades').addEventListener('click', function() { navigateTo('trades', this); });
 document.getElementById('nav-add').addEventListener('click', function() { navigateTo('add', this); });
 document.getElementById('nav-settings').addEventListener('click', function() { navigateTo('settings', this); });
 
-// APP INITIALIZATION
 async function initApp() {
   await fetchCloudData();
   renderDash();
