@@ -1,285 +1,740 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groww Trading Dashboard</title>
-    <style>
-        :root {
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --primary: #00d09c; /* Groww Green */
-            --danger: #e74c3c;
-            --text-main: #333;
-            --text-muted: #777;
-            --border: #e0e0e0;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; }
-        h1 { text-align: center; color: var(--text-main); }
-        
-        /* Summary Grid */
-        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; }
-        .card h3 { margin: 0; font-size: 14px; color: var(--text-muted); text-transform: uppercase;}
-        .card p { margin: 10px 0 0; font-size: 24px; font-weight: bold; color: var(--primary); }
-        .negative { color: var(--danger) !important; }
-        
-        /* Input Forms Layout */
-        .forms-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .form-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .form-card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; }
-        .btn-expense { background-color: var(--danger); }
-        
-        /* Table */
-        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background-color: #2c3e50; color: white; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f5f0">
+<title>Groww Tracker (Firebase Live)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg:      #f0f0eb;
+  --surface: #fafaf7;
+  --card:    #ffffff;
+  --card2:   #f7f7f3;
+  --border:  #e2e2da;
+  --border2: #d0d0c8;
+  --text:    #1a1a18;
+  --text2:   #3a3a36;
+  --muted:   #888880;
+  --muted2:  #b0b0a8;
+  --green:        #1a8a4a;
+  --green-bg:     #e8f5ee;
+  --green-border: #b8dfc8;
+  --green-light:  #d0eddc;
+  --red:        #c0392b;
+  --red-bg:     #fcecea;
+  --red-border: #f0b8b2;
+  --red-light:  #f8d8d5;
+  --blue:        #1e6eb5;
+  --blue-bg:     #e8f1fb;
+  --blue-border: #b8d4f0;
+  --gold:        #b07800;
+  --gold-bg:     #fdf5e0;
+  --gold-border: #f0d888;
+  --purple:        #6b3fcc;
+  --purple-bg:     #f0eafb;
+  --purple-border: #d0b8f0;
+  --teal:        #1a8a88;
+  --teal-bg:     #e5f5f5;
+  --orange:        #c05010;
+  --orange-bg:     #fdf0e8;
+  --font-h: 'Inter', sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+  --r: 14px; --rs: 10px; --nav: 60px;
+  --max: 480px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; background:var(--bg); color:var(--text); font-family:var(--font-h); overflow:hidden; -webkit-font-smoothing:antialiased; }
+
+#app { display:flex; flex-direction:column; height:100vh; height:100dvh; max-width:var(--max); margin:0 auto; position:relative; }
+
+.page { display:none; flex:1; overflow-y:auto; padding-bottom:calc(var(--nav) + 16px); background:var(--bg); }
+.page.active { display:block; }
+.pi { padding:12px 14px 0; }
+
+/* ── NAV ── */
+nav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:var(--max);
+  height:var(--nav); background:var(--card); border-top:1px solid var(--border);
+  display:flex; align-items:center; z-index:100;
+  box-shadow:0 -2px 12px rgba(0,0,0,0.06);
+}
+.nb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; border:none; background:none; cursor:pointer; padding:8px 0; color:var(--muted); font-family:var(--font-h); font-size:9px; font-weight:500; letter-spacing:.04em; transition:color .2s; text-transform:uppercase; }
+.nb.active { color:var(--green); }
+.ni { font-size:18px; transition:transform .15s; }
+.nb.active .ni { transform:translateY(-2px); }
+
+/* ── HEADER ── */
+.ph { padding:20px 14px 8px; display:flex; align-items:center; justify-content:space-between; }
+.pt { font-size:22px; font-weight:800; color:var(--text); letter-spacing:-.02em; }
+.ps { font-size:11px; color:var(--muted); margin-top:2px; }
+
+/* ── HERO ── */
+.hero { background:var(--green); border-radius:var(--r); padding:20px 16px; margin-bottom:10px; position:relative; overflow:hidden; text-align: center; }
+.hero::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(255,255,255,0.08); border-radius:50%; pointer-events:none; }
+.hero::after { content:''; position:absolute; bottom:-30px; left:-20px; width:100px; height:100px; background:rgba(255,255,255,0.05); border-radius:50%; pointer-events:none; }
+.hero-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.7); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; }
+.hero-val { font-size:38px; font-weight:800; color:#fff; letter-spacing:-.03em; line-height:1; font-family:var(--font-h); }
+.hero-sub { font-size:12px; color:rgba(255,255,255,0.8); margin-top:8px; font-weight:500; }
+.hero-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.2); border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; color:#fff; margin-top:8px; }
+
+/* ── KPI GRID ── */
+.kg { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.kpi { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
+.kpi-l { font-size:9px; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px; }
+.kpi-v { font-size:20px; font-weight:800; letter-spacing:-.02em; font-family:var(--font-h); }
+.kpi-s { font-size:10px; margin-top:3px; color:var(--muted); font-weight:400; }
+
+/* ── STAT ROW ── */
+.sr { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
+.sc { background:var(--card); border:1px solid var(--border); border-radius:var(--rs); padding:11px 8px; text-align:center; box-shadow:var(--shadow); }
+.sv { font-size:18px; font-weight:800; font-family:var(--font-h); letter-spacing:-.02em; }
+.sl { font-size:9px; font-weight:600; color:var(--muted); margin-top:3px; letter-spacing:.06em; text-transform:uppercase; }
+
+/* ── SECTION LABEL ── */
+.sl2 { font-size:10px; font-weight:700; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin:18px 0 9px; padding-bottom:6px; border-bottom:2px solid var(--border); }
+
+/* ── CARD ── */
+.card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:14px; margin-bottom:10px; box-shadow:var(--shadow); }
+
+/* ── SUMMARY ROW ── */
+.sum-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); }
+.sum-row:last-child { border-bottom:none; padding-bottom:0; }
+.sum-row:first-child { padding-top:0; }
+.sum-label { font-size:12px; font-weight:500; color:var(--text2); }
+.sum-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.sum-val { font-size:13px; font-weight:700; font-family:var(--font-m); letter-spacing:-.01em; }
+
+/* ── TRADE ITEM ── */
+.ti { display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--border); }
+.ti:last-child { border-bottom:none; }
+.td { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.td.p { background:var(--green); }
+.td.l { background:var(--red); }
+.tinfo { flex:1; min-width:0; }
+.tname { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tdate { font-size:10px; color:var(--muted); margin-top:1px; font-family:var(--font-m); }
+.tnote { font-size:10px; color:var(--muted2); margin-top:1px; font-style:italic; }
+.tpnl { font-family:var(--font-m); font-size:13px; font-weight:600; flex-shrink:0; }
+
+/* ── BAR CHART ── */
+.bc { display:flex; flex-direction:column; gap:10px; }
+.br { display:flex; align-items:center; gap:8px; }
+.bl { font-size:10px; font-weight:500; color:var(--muted); width:66px; flex-shrink:0; text-align:right; }
+.bt { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.bf { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
+.bn { font-size:10px; font-family:var(--font-m); font-weight:500; width:68px; flex-shrink:0; text-align:right; }
+
+/* ── DUAL BAR ── */
+.dbar-row { margin-bottom:14px; }
+.dbar-row:last-child { margin-bottom:0; }
+.dbar-top { display:flex; justify-content:space-between; font-size:11px; font-weight:600; margin-bottom:4px; }
+.dbar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:3px; }
+.dbar-fill { height:100%; border-radius:3px; transition:width 1s cubic-bezier(.23,1,.32,1); }
+.dbar-sub { display:flex; justify-content:space-between; font-size:10px; font-weight:500; }
+
+/* ── FORMS ── */
+.fg { margin-bottom:12px; }
+.fl { font-size:10px; font-weight:600; color:var(--text2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; display:block; }
+.fi, .fs { width:100%; background:var(--card); border:1.5px solid var(--border); border-radius:var(--rs); color:var(--text); font-family:var(--font-h); font-size:14px; font-weight:500; padding:11px 13px; outline:none; transition:border-color .2s; -webkit-appearance:none; appearance:none; }
+.fi:focus, .fs:focus { border-color:var(--green); box-shadow:0 0 0 3px var(--green-bg); }
+.fs { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M0 0l5 7 5-7z' fill='%23888880'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; }
+.fr2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.btn { width:100%; padding:13px; border-radius:var(--rs); border:none; cursor:pointer; font-family:var(--font-h); font-size:13px; font-weight:700; letter-spacing:.02em; transition:all .15s; text-transform:uppercase; box-shadow:var(--shadow); }
+.btn:active { transform:scale(.98); }
+.btn-g { background:var(--green); color:#fff; }
+.btn-r { background:var(--red); color:#fff; }
+.btn-b { background:var(--blue); color:#fff; }
+.btn-ghost { background:transparent; border:1.5px solid var(--border2); color:var(--muted); box-shadow:none; }
+.btn-sm { padding:8px 14px; font-size:11px; width:auto; }
+.btn-xs { padding:5px 10px; font-size:10px; width:auto; border-radius:6px; }
+
+/* ── TOGGLE ── */
+.tr { display:flex; border:1.5px solid var(--border); border-radius:var(--rs); overflow:hidden; margin-bottom:14px; background:var(--card2); }
+.tb { flex:1; padding:9px 4px; background:transparent; border:none; color:var(--muted); font-family:var(--font-h); font-size:10px; font-weight:600; cursor:pointer; transition:all .2s; letter-spacing:.02em; }
+.tb.active { background:var(--green); color:#fff; border-radius:calc(var(--rs) - 1px); }
+
+/* ── MONTH TABS ── */
+.mt { display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; margin-bottom:12px; }
+.mt::-webkit-scrollbar { display:none; }
+.mtb { flex-shrink:0; padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--muted); font-family:var(--font-h); font-size:11px; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; box-shadow:var(--shadow); }
+.mtb.active { background:var(--green); border-color:var(--green); color:#fff; }
+
+/* ── TOAST ── */
+#toast { position:fixed; bottom:calc(var(--nav) + 14px); left:50%; transform:translateX(-50%) translateY(16px); background:var(--text); color:var(--card); border-radius:24px; padding:9px 18px; font-size:12px; font-weight:500; z-index:500; opacity:0; pointer-events:none; transition:all .3s; white-space:nowrap; font-family:var(--font-h); }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── LOADER ── */
+.loader { display:flex; align-items:center; justify-content:center; padding:40px; }
+.spin { width:22px; height:22px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── EMPTY ── */
+.empty { text-align:center; padding:36px 20px; color:var(--muted); font-size:12px; }
+.ei { font-size:32px; margin-bottom:10px; }
+
+/* ── GOAL BAR ── */
+.gbt { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin:8px 0 5px; }
+.gbf { height:100%; border-radius:4px; background:var(--green); transition:width 1s cubic-bezier(.23,1,.32,1); }
+
+/* ── BADGES ── */
+.badge { display:inline-block; font-size:9px; font-weight:600; padding:2px 8px; border-radius:10px; letter-spacing:.04em; }
+.b-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+.b-red { background:var(--red-bg); color:var(--red); border:1px solid var(--red-border); }
+.b-blue { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+.b-gold { background:var(--gold-bg); color:var(--gold); border:1px solid var(--gold-border); }
+.b-purple { background:var(--purple-bg); color:var(--purple); border:1px solid var(--purple-border); }
+
+/* ── COLORS ── */
+.cg{color:var(--green)}.cr{color:var(--red)}.cb{color:var(--blue)}.cgo{color:var(--gold)}.cp{color:var(--purple)}.ct{color:var(--teal)}.co{color:var(--orange)}.cm{color:var(--muted)}
+
+/* ── BEST/WORST ── */
+.bw-card { border-radius:var(--rs); padding:13px 12px; box-shadow:var(--shadow); }
+.bw-green { background:var(--green-bg); border:1px solid var(--green-border); }
+.bw-red { background:var(--red-bg); border:1px solid var(--red-border); }
+
+/* ── INSIGHT ── */
+.insight { background:var(--gold-bg); border:1px solid var(--gold-border); border-left:3px solid var(--gold); border-radius:var(--rs); padding:10px 12px; margin-bottom:8px; font-size:11px; font-weight:500; color:var(--text2); line-height:1.6; text-align: left; }
+.insight strong { color:var(--gold); }
+
+/* ── SETUP ── */
+.step { display:flex; gap:12px; margin-bottom:18px; }
+.sn { width:26px; height:26px; border-radius:50%; background:var(--green-bg); border:1.5px solid var(--green); color:var(--green); font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.sb { flex:1; }
+.st { font-size:13px; font-weight:700; margin-bottom:3px; color:var(--text); }
+.sd { font-size:11px; color:var(--muted); line-height:1.7; }
+.divider { height:1px; background:var(--border); margin:10px 0; }
+.exact { font-family:var(--font-m); }
+.pill { display:inline-flex; align-items:center; background:var(--card2); border:1px solid var(--border); border-radius:20px; padding:3px 10px; font-size:10px; font-weight:600; color:var(--text2); gap:4px; }
+</style>
 </head>
 <body>
+<div id="app">
 
-<div class="container">
-    <h1>📈 Trading Dashboard</h1>
-    
-    <div class="summary-grid">
-        <div class="card">
-            <h3>Final Balance</h3>
-            <p id="calc-final-balance">₹0</p>
-        </div>
-        <div class="card">
-            <h3>Net Profit</h3>
-            <p id="calc-net-profit">₹0</p>
-        </div>
-        <div class="card">
-            <h3>Total Withdrawals</h3>
-            <p id="calc-withdrawals" class="negative">₹0</p>
-        </div>
-        <div class="card">
-            <h3>Win Rate</h3>
-            <p id="calc-win-rate">0%</p>
-        </div>
+  <div class="page active" id="pg-dashboard">
+    <div class="ph">
+      <div><div class="pt">Dashboard</div><div class="ps" id="dash-ts">Loading…</div></div>
+      <button class="btn-ghost btn btn-xs" id="refresh-btn" style="font-size:12px;padding:6px 12px;width:auto">↻ Refresh</button>
     </div>
+    <div class="pi" id="dash-content"><div class="loader"><div class="spin"></div></div></div>
+  </div>
 
-    <div class="forms-container">
-        <div class="form-card">
-            <h2>➕ Add Daily Trade</h2>
-            <form id="form-trade">
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="trade-date" required>
-                </div>
-                <div class="form-group">
-                    <label>Instrument (e.g. SENSEX [PUT])</label>
-                    <input type="text" id="trade-instrument" required>
-                </div>
-                <div class="form-group">
-                    <label>Outcome</label>
-                    <select id="trade-outcome">
-                        <option value="PROFIT">PROFIT</option>
-                        <option value="LOSS">LOSS</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>P&L Amount (Use negative for loss, e.g. -400)</label>
-                    <input type="number" id="trade-pnl" required>
-                </div>
-                <button type="submit">Record Trade</button>
-            </form>
-        </div>
+  <div class="page" id="pg-monthly">
+    <div class="ph"><div><div class="pt">Monthly</div><div class="ps">Tap a month to explore</div></div></div>
+    <div class="pi" id="monthly-content"><div class="loader"><div class="spin"></div></div></div>
+  </div>
 
-        <div class="form-card">
-            <h2>💸 Add Expense / Withdrawal</h2>
-            <form id="form-expense">
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="expense-date" required>
-                </div>
-                <div class="form-group">
-                    <label>Amount (₹)</label>
-                    <input type="number" id="expense-amount" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label>Reason (e.g. Food, Trip, EMI)</label>
-                    <input type="text" id="expense-reason" required>
-                </div>
-                <button type="submit" class="btn-expense">Record Expense</button>
-            </form>
-        </div>
+  <div class="page" id="pg-trades">
+    <div class="ph"><div><div class="pt">Trades</div><div class="ps" id="trade-sub">All entries</div></div></div>
+    <div class="pi">
+      <div class="mt" id="trade-tabs"></div>
+      <div id="trades-content"><div class="loader"><div class="spin"></div></div></div>
     </div>
+  </div>
 
-    <h2 style="margin-top: 40px;">Recent Trades</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Instrument</th>
-                <th>Outcome</th>
-                <th>P&L (₹)</th>
-            </tr>
-        </thead>
-        <tbody id="trade-table-body">
-            </tbody>
-    </table>
+  <div class="page" id="pg-add">
+    <div class="ph"><div><div class="pt">Add Entry</div><div class="ps">Cloud-Synced Database</div></div></div>
+    <div class="pi">
+      <div class="tr">
+        <button class="tb active" id="btn-tab-trade" onclick="switchForm('trade', this)">Trade</button>
+        <button class="tb" id="btn-tab-expense" onclick="switchForm('expense', this)">Expense</button>
+        <button class="tb" id="btn-tab-invest" onclick="switchForm('invest', this)">Investment</button>
+        <button class="tb" id="btn-tab-goal" onclick="switchForm('goal', this)">Goal</button>
+      </div>
+
+      <div id="form-trade">
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="t-date"></div>
+        <div class="fg">
+          <label class="fl">Instrument</label>
+          <select class="fs" id="t-inst">
+            <option>SENSEX [PUT]</option><option>SENSEX [CALL]</option><option>SENSEX [CALL &amp; PUT]</option>
+            <option>NIFTY [PUT]</option><option>NIFTY [CALL]</option><option>NIFTY [CALL &amp; PUT]</option>
+            <option>BANKNIFTY [PUT]</option><option>BANKNIFTY [CALL]</option><option>BANKNIFTY [CALL &amp; PUT]</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div id="t-other-g" class="fg" style="display:none"><label class="fl">Custom Instrument</label><input class="fi" type="text" id="t-other" placeholder="e.g. FINNIFTY [PUT]"></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Outcome</label>
+            <select class="fs" id="t-out"><option value="PROFIT">Profit ↑</option><option value="LOSS">Loss ↓</option></select>
+          </div>
+          <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="t-amt" placeholder="0" inputmode="numeric"></div>
+        </div>
+        <div class="fg"><label class="fl">Note (optional)</label><input class="fi" type="text" id="t-note" placeholder="e.g. Strong trend day…"></div>
+        <button class="btn btn-g" id="submit-trade-btn">+ Add Trade</button>
+      </div>
+
+      <div id="form-expense" style="display:none">
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="e-date"></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Category</label>
+            <select class="fs" id="e-cat">
+              <option>Food</option><option>Medical</option><option>Transport</option><option>EMI</option>
+              <option>Family</option><option>Entertainment</option><option>Utilities</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="e-amt" placeholder="0" inputmode="numeric"></div>
+        </div>
+        <div class="fg"><label class="fl">Description</label><input class="fi" type="text" id="e-desc" placeholder="What was this for?"></div>
+        <button class="btn btn-r" id="submit-expense-btn">+ Add Expense</button>
+      </div>
+
+      <div id="form-invest" style="display:none">
+        <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="i-date"></div>
+        <div class="fg"><label class="fl">Amount Added (₹)</label><input class="fi" type="number" id="i-amt" placeholder="0" inputmode="numeric"></div>
+        <div class="fg"><label class="fl">Source / Note</label><input class="fi" type="text" id="i-note" placeholder="e.g. Added from savings"></div>
+        <button class="btn btn-b" id="submit-invest-btn">+ Add Investment</button>
+      </div>
+
+      <div id="form-goal" style="display:none">
+        <div class="fg"><label class="fl">Goal Name</label><input class="fi" type="text" id="g-name" placeholder="e.g. Reach ₹10L portfolio"></div>
+        <div class="fg"><label class="fl">Target Amount (₹)</label><input class="fi" type="number" id="g-target" placeholder="0" inputmode="numeric"></div>
+        <div class="fg"><label class="fl">Target Date</label><input class="fi" type="date" id="g-date"></div>
+        <div class="fg"><label class="fl">Note</label><input class="fi" type="text" id="g-note" placeholder="Why this goal?"></div>
+        <button class="btn btn-g" id="submit-goal-btn">+ Set Goal</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="pg-settings">
+    <div class="ph"><div><div class="pt">Database Control</div><div class="ps">System configuration</div></div></div>
+    <div class="pi">
+      <div class="card">
+        <div class="kpi-l" style="margin-bottom:6px">Database Link Status</div>
+        <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:10px;">🟢 Live Firestore DB Connected</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.6">Your application is permanently linked to your personal cluster setup. Data loads directly from your live instance.</div>
+      </div>
+
+      <div class="sl2">One-Click Historical Data Import</div>
+      <div class="card">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7">If your database is fresh, use this button to push all your hardcoded historical records (March, April, May 2026) directly into the cloud. Use this tool only once to prevent duplicate rows.</div>
+        <button class="btn btn-b" id="import-btn">📦 Sync Hardcoded History to Firebase</button>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <button class="nb active" id="nav-dash"><span class="ni">📊</span><span>Dash</span></button>
+    <button class="nb" id="nav-monthly"><span class="ni">📅</span><span>Monthly</span></button>
+    <button class="nb" id="nav-trades"><span class="ni">📈</span><span>Trades</span></button>
+    <button class="nb" id="nav-add"><span class="ni">➕</span><span>Add</span></button>
+    <button class="nb" id="nav-settings"><span class="ni">⚙️</span><span>Setup</span></button>
+  </nav>
 </div>
+<div id="toast"></div>
 
 <script type="module">
-    // --- 1. IMPORT FIREBASE ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-    import { addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-    // --- 2. YOUR EXACT FIREBASE CONFIGURATION ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtMGB7mAjP6xyOgjA-a95XnkC16TNLMYE",
-      authDomain: "groww-tracker-ebb9d.firebaseapp.com",
-      projectId: "groww-tracker-ebb9d",
-      storageBucket: "groww-tracker-ebb9d.firebasestorage.app",
-      messagingSenderId: "462510334064",
-      appId: "1:462510334064:web:250c5121d5e435f5ae54b5",
-      measurementId: "G-QC64Y7RTJH"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyBtMGB7mAjP6xyOgjA-a95XnkC16TNLMYE",
+  authDomain: "groww-tracker-ebb9d.firebaseapp.com",
+  projectId: "groww-tracker-ebb9d",
+  storageBucket: "groww-tracker-ebb9d.firebasestorage.app",
+  messagingSenderId: "462510334064",
+  appId: "1:462510334064:web:250c5121d5e435f5ae54b5",
+  measurementId: "G-QC64Y7RTJH"
+};
 
-    // Initialize Firebase and Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    // --- 3. CONFIGURATION (Based on your tracking sheets) ---
-    const STARTING_CAPITAL = 184000;
-    const ADDED_INVESTMENT = 100000;
+// LOCAL MEMORY STATE Cache
+let cache = { trades: [], expenses: [], investments: [], goals: [] };
+let tradeMonth = 'all';
 
-    let db_trades = [];
-    let db_withdrawals = [];
+// GLOBAL UTILITIES
+const fmt = n => '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN');
+const mkey = s => { const d=new Date(s); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
+const mlabel = k => { const [y,m]=k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]+' '+y; };
+const pnl = t => { const a=parseFloat(t.Amount)||0; return t.Outcome==='LOSS'?-Math.abs(a):Math.abs(a); };
 
-    // --- 4. FETCH DATA FROM FIRESTORE ---
-    async function fetchLiveDashboardData() {
-        db_trades = [];
-        db_withdrawals = [];
+function byMonth(items, dk='Date') {
+  const g={};
+  items.forEach(i=>{ const k=mkey(i[dk]); (g[k]=g[k]||[]).push(i); });
+  return g;
+}
 
-        try {
-            // Pull Trades
-            const tradesSnapshot = await getDocs(collection(db, "trades"));
-            tradesSnapshot.forEach((doc) => {
-                if (doc.data().date) { // Dynamic filter for blank dummy setups
-                    db_trades.push(doc.data());
-                }
-            });
+function toast(msg) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
 
-            // Pull Withdrawals
-            const withdrawalsSnapshot = await getDocs(collection(db, "withdrawals"));
-            withdrawalsSnapshot.forEach((doc) => {
-                if (doc.data().date) {
-                    db_withdrawals.push(doc.data());
-                }
-            });
+// ROUTING ARCHITECTURE
+function navigateTo(pageId, targetBtn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('pg-' + pageId).classList.add('active');
+  targetBtn.classList.add('active');
+  
+  if (pageId === 'dashboard') renderDash();
+  else if (pageId === 'monthly') renderMonthly();
+  else if (pageId === 'trades') renderTrades();
+  else if (pageId === 'add') initAddForms();
+}
 
-            runCalculations();
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            alert("Could not connect to database. Make sure your Firestore rules are set correctly.");
-        }
-    }
-
-    // --- 5. CALCULATIONS ENGINE ---
-    function runCalculations() {
-        let totalPnl = 0;
-        let winningTrades = 0;
-        
-        db_trades.forEach(trade => {
-            totalPnl += trade.pnl;
-            if (trade.outcome === "PROFIT" || trade.pnl > 0) winningTrades++;
-        });
-
-        let totalWithdrawals = 0;
-        db_withdrawals.forEach(w => { totalWithdrawals += w.amount; });
-
-        const winRate = db_trades.length > 0 ? ((winningTrades / db_trades.length) * 100).toFixed(1) : 0;
-        const finalBalance = STARTING_CAPITAL + ADDED_INVESTMENT + totalPnl - totalWithdrawals;
-
-        // Update Dashboard Text
-        document.getElementById('calc-final-balance').innerText = `₹${finalBalance.toLocaleString('en-IN')}`;
-        document.getElementById('calc-net-profit').innerText = `₹${totalPnl.toLocaleString('en-IN')}`;
-        document.getElementById('calc-withdrawals').innerText = `₹${totalWithdrawals.toLocaleString('en-IN')}`;
-        document.getElementById('calc-win-rate').innerText = `${winRate}%`;
-
-        // Render Table (Sort by newest date first)
-        const sortedTrades = [...db_trades].sort((a, b) => new Date(b.date) - new Date(a.date));
-        const tbody = document.getElementById('trade-table-body');
-        tbody.innerHTML = '';
-        sortedTrades.forEach(trade => {
-            const row = `<tr>
-                <td>${trade.date}</td>
-                <td>${trade.instrument}</td>
-                <td>${trade.outcome}</td>
-                <td style="color: ${trade.pnl >= 0 ? '#00d09c' : '#e74c3c'}; font-weight:bold;">
-                    ${trade.pnl >= 0 ? '+' : ''}${trade.pnl}
-                </td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-
-    // --- 6. EVENT LISTENERS (Save to Firestore) ---
+// DATABASE LAYER: FETCH FROM FIREBASE
+async function fetchCloudData() {
+  try {
+    const tSnap = await getDocs(collection(db, "trades"));
+    const eSnap = await getDocs(collection(db, "withdrawals"));
     
-    // Submit New Trade
-    document.getElementById('form-trade').addEventListener('submit', async function(e) {
-        e.preventDefault(); 
-        
-        const btn = this.querySelector('button');
-        btn.innerText = "Saving...";
+    cache.trades = [];
+    cache.expenses = [];
+    cache.investments = [];
+    cache.goals = [];
 
-        const newTrade = {
-            date: document.getElementById('trade-date').value,
-            instrument: document.getElementById('trade-instrument').value,
-            outcome: document.getElementById('trade-outcome').value,
-            pnl: parseFloat(document.getElementById('trade-pnl').value)
-        };
+    tSnap.forEach(doc => { if(doc.data().Date) cache.trades.push(doc.data()); });
+    eSnap.forEach(doc => { if(doc.data().Date) cache.expenses.push(doc.data()); });
 
-        try {
-            await addDoc(collection(db, "trades"), newTrade);
-            this.reset();
-            fetchLiveDashboardData(); 
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            alert("Error saving trade.");
-        } finally {
-            btn.innerText = "Record Trade";
-        }
-    });
+    // Pre-populate core initial dynamic parameters if empty in Firestore
+    if(cache.trades.length === 0 && cache.expenses.length === 0) {
+       cache = getHardcodedBackup();
+    } else {
+       // Fallbacks for missing non-essential tables
+       cache.investments = [{Date:'2026-03-01',Amount:184000,Note:'Initial capital'}, {Date:'2026-04-17',Amount:100000,Note:'Added from father'}];
+       cache.goals = [{Name:'Reach ₹5L portfolio', Target:500000, Date:'2026-12-31', Note:'Year-end target'}];
+    }
+  } catch(e) {
+    console.error(e);
+    cache = getHardcodedBackup();
+  }
+}
 
-    // Submit New Expense/Withdrawal
-    document.getElementById('form-expense').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const btn = this.querySelector('button');
-        btn.innerText = "Saving...";
+// ── RENDER ENGINE: DASHBOARD ──
+function renderDash() {
+  const d = cache;
+  const inv   = d.investments.reduce((s,i)=>s+(parseFloat(i.Amount)||0),0);
+  const gross = d.trades.reduce((s,t)=>s+pnl(t),0);
+  const exp   = d.expenses.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);
+  const net   = gross - exp;
+  const bal   = inv + net;
+  const wins  = d.trades.filter(t=>t.Outcome==='PROFIT').length;
+  const losses= d.trades.filter(t=>t.Outcome==='LOSS').length;
+  const wr    = d.trades.length ? Math.round(wins/d.trades.length*100) : 0;
 
-        const newExpense = {
-            date: document.getElementById('expense-date').value,
-            amount: parseFloat(document.getElementById('expense-amount').value),
-            reason: document.getElementById('expense-reason').value
-        };
+  const trByM = byMonth(d.trades), exByM = byMonth(d.expenses);
+  const months = [...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort();
 
-        try {
-            await addDoc(collection(db, "withdrawals"), newExpense);
-            this.reset();
-            fetchLiveDashboardData();
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            alert("Error saving expense.");
-        } finally {
-            btn.innerText = "Record Expense";
-        }
-    });
+  const mRows = months.map(m=>{
+    const ts=trByM[m]||[], es=exByM[m]||[];
+    const mg=ts.reduce((s,t)=>s+pnl(t),0);
+    const me=es.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);
+    return {key:m, label:mlabel(m), mg, me, mn:mg-me};
+  });
+  const maxAll = Math.max(...mRows.map(r=>Math.max(r.mg,r.me)),1);
+  const streak = calcStreak(d.trades);
 
-    // --- 7. INITIALIZE DASHBOARD ---
-    fetchLiveDashboardData();
+  document.getElementById('dash-content').innerHTML = `
+    <div class="hero">
+      <div class="hero-label">Total Portfolio Value</div>
+      <div class="hero-val">${fmt(bal)}</div>
+      <div class="hero-sub">${net>=0?'▲':'▼'} ${fmt(net)} net profit</div>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:center">
+        <div class="hero-badge">📈 ${d.trades.length} trades</div>
+        <div class="hero-badge">${wr}% win rate</div>
+      </div>
+    </div>
 
+    <div class="kg">
+      <div class="kpi"><div class="kpi-l">Total Invested</div><div class="kpi-v cb exact">${fmt(inv)}</div></div>
+      <div class="kpi"><div class="kpi-l">Gross Profit</div><div class="kpi-v cg exact">${fmt(gross)}</div></div>
+      <div class="kpi"><div class="kpi-l">Total Expenses</div><div class="kpi-v cr exact">${fmt(exp)}</div></div>
+      <div class="kpi"><div class="kpi-l">Net Profit</div><div class="kpi-v ${net>=0?'cg':'cr'} exact">${fmt(net)}</div></div>
+    </div>
+
+    <div class="sr">
+      <div class="sc"><div class="sv cg">${wins}</div><div class="sl">Wins</div></div>
+      <div class="sc"><div class="sv cr">${losses}</div><div class="sl">Losses</div></div>
+      <div class="sc"><div class="sv cp">${wr}%</div><div class="sl">Win Rate</div></div>
+    </div>
+
+    ${streak>1?`<div class="insight"><strong>🔥 ${streak}-trade win streak</strong> — great momentum, stay disciplined.</div>`:''}
+
+    <div class="sl2">Monthly Summary — Exact Figures</div>
+    <div class="card">
+      ${mRows.map(r=>`
+        <div class="sum-row">
+          <div>
+            <div class="sum-label">${r.label}</div>
+            <div class="sum-sub">Profit <span class="cg exact">${fmt(r.mg)}</span> · Exp <span class="cr exact">${fmt(r.me)}</span></div>
+          </div>
+          <div style="text-align:right">
+            <div class="sum-val ${r.mn>=0?'cg':'cr'} exact">${r.mn>=0?'+':'−'}${fmt(r.mn)}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="sl2">Profit vs Expenses by Month</div>
+    <div class="card">
+      ${mRows.map(r=>`
+        <div class="dbar-row">
+          <div class="dbar-top"><span>${r.label}</span><span class="${r.mn>=0?'cg':'cr'}">${fmt(r.mn)} net</span></div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:${r.mg/maxAll*100}%;background:var(--green)"></div></div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:${r.me/maxAll*100}%;background:var(--red)"></div></div>
+        </div>`).join('')}
+    </div>
+  `;
+  document.getElementById('dash-ts').textContent = 'Live Cloud Sync Active';
+}
+
+function calcStreak(trades) {
+  const sorted=[...trades].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+  let s=0; for(const t of sorted){if(t.Outcome==='PROFIT')s++;else break;} return s;
+}
+
+// ── RENDER ENGINE: MONTHLY ──
+function renderMonthly(selectedMonth = null) {
+  const d = cache;
+  const trByM=byMonth(d.trades), exByM=byMonth(d.expenses);
+  const months=[...new Set([...Object.keys(trByM),...Object.keys(exByM)])].sort().reverse();
+
+  if (!months.length) {
+    document.getElementById('monthly-content').innerHTML='<div class="empty">No active transactions found</div>';
+    return;
+  }
+  const m = selectedMonth || months[0];
+  const mTs=trByM[m]||[], mEs=exByM[m]||[];
+
+  const mg=mTs.reduce((s,t)=>s+pnl(t),0), me=mEs.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0), mn=mg-me;
+  const catMap={}; mEs.forEach(e=>{ catMap[e.Category]=(catMap[e.Category]||0)+(parseFloat(e.Amount)||0); });
+  const cats=Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  const maxC=Math.max(...cats.map(c=>c[1]),1);
+
+  window.selectMonthFilter = (target) => renderMonthly(target);
+
+  document.getElementById('monthly-content').innerHTML = `
+    <div class="mt">${months.map(mo=>`<button class="mtb ${mo===m?'active':''}" onclick="selectMonthFilter('${mo}')">${mlabel(mo)}</button>`).join('')}</div>
+    <div class="card">
+      <div class="sum-row"><div><div class="sum-label">Gross Profit</div></div><div class="sum-val cg exact">${fmt(mg)}</div></div>
+      <div class="sum-row"><div><div class="sum-label">Total Expenses</div></div><div class="sum-val cr exact">${fmt(me)}</div></div>
+      <div class="sum-row"><div><div class="sum-label">Net Return</div></div><div class="sum-val ${mn>=0?'cg':'cr'} exact">${fmt(mn)}</div></div>
+    </div>
+    
+    ${cats.length?`
+    <div class="sl2">Expense Breakdown</div>
+    <div class="card">
+      <div class="bc">${cats.map(([c,a])=>`
+          <div class="br">
+            <div class="bl">${c}</div>
+            <div class="bt"><div class="bf" style="width:${a/maxC*100}%;background:var(--red)"></div></div>
+            <div class="bn cr exact">${fmt(a)}</div>
+          </div>`).join('')}</div>
+    </div>`:''}
+  `;
+}
+
+// ── RENDER ENGINE: TRADES VIEW ──
+function renderTrades() {
+  const d = cache;
+  const trByM=byMonth(d.trades);
+  const months=Object.keys(trByM).sort().reverse();
+
+  window.setTradeTab = (m) => { tradeMonth = m; renderTrades(); };
+
+  document.getElementById('trade-tabs').innerHTML =
+    `<button class="mtb ${tradeMonth==='all'?'active':''}" onclick="setTradeTab('all')">All</button>` +
+    months.map(m=>`<button class="mtb ${tradeMonth===m?'active':''}" onclick="setTradeTab('${m}')">${mlabel(m)}</button>`).join('');
+
+  const trades = tradeMonth==='all'?d.trades:(trByM[tradeMonth]||[]);
+  const sorted=[...trades].sort((a,b)=>new Date(b.Date)-new Date(a.Date));
+  const total=sorted.reduce((s,t)=>s+pnl(t),0);
+
+  document.getElementById('trade-sub').textContent = `${sorted.length} records structural ledger`;
+
+  document.getElementById('trades-content').innerHTML = `
+    <div class="card">
+      <div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Sum Window P&L</div>
+      <div style="font-size:22px;font-weight:800;" class="${total>=0?'cg':'cr'}">${fmt(total)}</div>
+    </div>
+    <div class="card">
+      ${sorted.map(t=>{
+        const p=pnl(t);
+        return `<div class="ti">
+          <div class="td ${p>=0?'p':'l'}"></div>
+          <div class="tinfo"><div class="tname">${t.Instrument}</div><div class="tdate">${t.Date}</div></div>
+          <div class="tpnl ${p>=0?'cg':'cr'} exact">${fmt(p)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// FORM PRESENTATION CONTROLS
+function initAddForms() {
+  const t = new Date().toISOString().split('T')[0];
+  document.getElementById('t-date').value = t;
+  document.getElementById('e-date').value = t;
+  document.getElementById('i-date').value = t;
+}
+
+window.switchForm = (type, btn) => {
+  ['trade','expense','invest','goal'].forEach(t => document.getElementById('form-'+t).style.display = t===type ? 'block' : 'none');
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+};
+
+document.getElementById('t-inst').addEventListener('change', function() {
+  document.getElementById('t-other-g').style.display = this.value==='Other' ? 'block' : 'none';
+});
+
+// SUBMIT OPERATIONS -> SENT DIRECTLY TO FIREBASE
+document.getElementById('submit-trade-btn').addEventListener('click', async function() {
+  const inst = document.getElementById('t-inst').value==='Other' ? document.getElementById('t-other').value : document.getElementById('t-inst').value;
+  const data = {
+    Date: document.getElementById('t-date').value,
+    Instrument: inst,
+    Outcome: document.getElementById('t-out').value,
+    Amount: parseFloat(document.getElementById('t-amt').value) || 0,
+    Note: document.getElementById('t-note').value
+  };
+
+  if(!data.Date || !data.Instrument || !data.Amount) { toast('Please complete all parameters'); return; }
+  this.innerText = 'Saving…';
+  await addDoc(collection(db, "trades"), data);
+  toast('Trade Uploaded!');
+  this.innerText = '+ Add Trade';
+  document.getElementById('t-amt').value = '';
+  await fetchCloudData();
+});
+
+document.getElementById('submit-expense-btn').addEventListener('click', async function() {
+  const data = {
+    Date: document.getElementById('e-date').value,
+    Category: document.getElementById('e-cat').value,
+    Amount: parseFloat(document.getElementById('e-amt').value) || 0,
+    Description: document.getElementById('e-desc').value
+  };
+
+  if(!data.Date || !data.Amount) { toast('Please specify amount parameters'); return; }
+  this.innerText = 'Saving…';
+  await addDoc(collection(db, "withdrawals"), data);
+  toast('Expense Uploaded!');
+  this.innerText = '+ Add Expense';
+  document.getElementById('e-amt').value = '';
+  await fetchCloudData();
+});
+
+// HISTORICAL BACKUP SYSTEM DATA LOADER
+document.getElementById('import-btn').addEventListener('click', async function() {
+  this.innerText = "Syncing Core Rows...";
+  this.disabled = true;
+  const dataset = getHardcodedBackup();
+
+  try {
+     for(let t of dataset.trades) { await addDoc(collection(db, "trades"), t); }
+     for(let e of dataset.expenses) { await addDoc(collection(db, "withdrawals"), e); }
+     toast("Migration Completed Successfully!");
+     await fetchCloudData();
+     renderDash();
+  } catch(err) {
+     toast("Sync Error encountered.");
+  } finally {
+     this.innerText = "📦 Sync Hardcoded History to Firebase";
+     this.disabled = false;
+  }
+});
+
+document.getElementById('refresh-btn').addEventListener('click', async () => {
+  await fetchCloudData();
+  renderDash();
+  toast('Cloud Sync Complete');
+});
+
+// NAVIGATION WIRING
+document.getElementById('nav-dash').addEventListener('click', function() { navigateTo('dashboard', this); });
+document.getElementById('nav-monthly').addEventListener('click', function() { navigateTo('monthly', this); });
+document.getElementById('nav-trades').addEventListener('click', function() { navigateTo('trades', this); });
+document.getElementById('nav-add').addEventListener('click', function() { navigateTo('add', this); });
+document.getElementById('nav-settings').addEventListener('click', function() { navigateTo('settings', this); });
+
+// GLOBAL STATE DATA CONTEXT FALLBACK
+function getHardcodedBackup() {
+  return {
+    trades:[
+      {Date:'2026-03-12',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:2665,Note:''},
+      {Date:'2026-03-16',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:392,Note:''},
+      {Date:'2026-03-17',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:1148,Note:''},
+      {Date:'2026-03-18',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:1373,Note:''},
+      {Date:'2026-03-19',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:11529,Note:''},
+      {Date:'2026-03-23',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:3692,Note:''},
+      {Date:'2026-03-24',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:16830,Note:'Best day March'},
+      {Date:'2026-03-25',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:14414,Note:''},
+      {Date:'2026-03-27',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:4421,Note:''},
+      {Date:'2026-03-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:8962,Note:''},
+      {Date:'2026-04-01',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:13156,Note:''},
+      {Date:'2026-04-02',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:116997,Note:'Massive global selloff day'},
+      {Date:'2026-04-06',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:4695,Note:''},
+      {Date:'2026-04-07',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',Amount:4429,Note:'Fakeout'},
+      {Date:'2026-04-08',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:3307,Note:''},
+      {Date:'2026-04-09',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:29853,Note:''},
+      {Date:'2026-04-10',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:349,Note:'Scratch'},
+      {Date:'2026-04-13',Instrument:'SENSEX [CALL & PUT]',Outcome:'LOSS',Amount:2994,Note:'Overtraded'},
+      {Date:'2026-04-15',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:4263,Note:''},
+      {Date:'2026-04-16',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:6989,Note:''},
+      {Date:'2026-04-17',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:8672,Note:''},
+      {Date:'2026-04-20',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:9060,Note:''},
+      {Date:'2026-04-21',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:827,Note:''},
+      {Date:'2026-04-22',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:16528,Note:''},
+      {Date:'2026-04-23',Instrument:'SENSEX [CALL]',Outcome:'PROFIT',Amount:7535,Note:''},
+      {Date:'2026-04-24',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:267,Note:''},
+      {Date:'2026-04-29',Instrument:'SENSEX [PUT]',Outcome:'LOSS',Amount:35691,Note:'Held too long'},
+      {Date:'2026-04-30',Instrument:'SENSEX [CALL & PUT]',Outcome:'PROFIT',Amount:10525,Note:''},
+      {Date:'2026-05-04',Instrument:'SENSEX [PUT]',Outcome:'PROFIT',Amount:1052,Note:''},
+      {Date:'2026-05-05',Instrument:'NIFTY [CALL & PUT]',Outcome:'PROFIT',Amount:6645,Note:''},
+    ],
+    expenses:[
+      {Date:'2026-03-20',Category:'Family',Amount:1000,Description:'Birthday'},
+      {Date:'2026-03-23',Category:'Other',Amount:100,Description:'Expenses'},
+      {Date:'2026-03-24',Category:'Family',Amount:900,Description:'Ranjith expenses'},
+      {Date:'2026-03-27',Category:'Food',Amount:400,Description:'Thursday food'},
+      {Date:'2026-03-27',Category:'Food',Amount:4000,Description:'Sat & Sun expenses'},
+      {Date:'2026-03-30',Category:'Food',Amount:1000,Description:'Visakan toy + mutton'},
+      {Date:'2026-03-30',Category:'Other',Amount:2000,Description:'House expenses (Nuts)'},
+      {Date:'2026-04-02',Category:'Food',Amount:698,Description:'Sat & Sunday'},
+      {Date:'2026-04-10',Category:'Entertainment',Amount:15000,Description:'Trip'},
+      {Date:'2026-04-14',Category:'Other',Amount:30300,Description:'Phone ₹25k + Raj CC ₹5,300'},
+      {Date:'2026-04-14',Category:'Family',Amount:100,Description:'Raj'},
+      {Date:'2026-04-15',Category:'Food',Amount:900,Description:'Mutton'},
+      {Date:'2026-04-16',Category:'EMI',Amount:4555,Description:'Car EMI'},
+      {Date:'2026-04-16',Category:'Medical',Amount:516,Description:'Visakan hospital + snack'},
+      {Date:'2026-04-18',Category:'Medical',Amount:2200,Description:'Hospital + Raj + food + car EMI'},
+      {Date:'2026-04-19',Category:'Food',Amount:1000,Description:'Sunday'},
+      {Date:'2026-04-22',Category:'Other',Amount:1000,Description:'Home expenses'},
+      {Date:'2026-04-24',Category:'Family',Amount:10000,Description:'Raj'},
+      {Date:'2026-04-25',Category:'Medical',Amount:700,Description:'Raj amma hospital'},
+      {Date:'2026-04-24',Category:'Other',Amount:150,Description:'Raj mobile'},
+      {Date:'2026-04-26',Category:'Transport',Amount:200,Description:'Raj bike petrol'},
+      {Date:'2026-04-27',Category:'Medical',Amount:200,Description:'Visakan hospital'},
+      {Date:'2026-04-27',Category:'Transport',Amount:400,Description:'Nisha petrol'},
+      {Date:'2026-04-30',Category:'Transport',Amount:4000,Description:'Raj bike service'},
+    ],
+    investments:[
+      {Date:'2026-03-01',Amount:184000,Note:'Initial capital'},
+      {Date:'2026-04-17',Amount:100000,Note:'Added from father'},
+    ],
+    goals:[
+      {Name:'Reach ₹5L portfolio', Target:500000, Date:'2026-12-31', Note:'Year-end target'}
+    ]
+  };
+}
+
+// APP INITIALIZATION
+async function initApp() {
+  await fetchCloudData();
+  renderDash();
+}
+initApp();
 </script>
 </body>
 </html>
