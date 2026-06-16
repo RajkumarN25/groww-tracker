@@ -37,6 +37,10 @@
   --blue: #60a5fa;
   --blue-bg: rgba(96, 165, 250, 0.12);
   --blue-border: rgba(96, 165, 250, 0.3);
+
+  --gold: #f59e0b;
+  --gold-bg: rgba(245, 158, 11, 0.12);
+  --gold-border: rgba(245, 158, 11, 0.3);
   
   --font-h: 'Inter', sans-serif;
   --font-m: 'JetBrains Mono', monospace;
@@ -191,6 +195,7 @@ nav {
 .cg { color:var(--green) !important; }
 .cr { color:var(--red) !important; }
 .cb { color:var(--blue) !important; }
+.cgo { color:var(--gold) !important; }
 .cm { color:var(--muted) !important; }
 
 .insight { background:rgba(52, 211, 153, 0.04); border:1px solid rgba(52, 211, 153, 0.15); border-left:4px solid var(--green); border-radius:var(--rs); padding:12px 14px; margin-bottom:12px; font-size:12px; font-weight:500; color:var(--text2); line-height:1.6; text-align: left; width: 100%; }
@@ -411,7 +416,6 @@ async function fetchCloudData() {
   cache.investments = [];
   cache.goals = [];
 
-  // Defensive Pipeline Wrapping: One failure will no longer freeze the app boot sequences
   try {
     const tSnap = await getDocs(collection(db, "trades"));
     tSnap.forEach(docSnap => { 
@@ -445,7 +449,6 @@ async function fetchCloudData() {
     });
   } catch(e) { console.error("Investments cloud pull failed:", e); }
 
-  // Check baseline configurations fallbacks
   if (cache.investments.length === 0) {
     cache.investments = [{Date:'2026-03-01',Amount:184000,Note:'Initial capital'}, {Date:'2026-04-17',Amount:100000,Note:'Added from father'}];
   }
@@ -458,7 +461,6 @@ async function fetchCloudData() {
       activeMonthlyTab = "2026-05";
   }
 
-  // FORCE RENDER CALL: Ensures dashboard finishes loading regardless of console warning logs
   renderDash();
 }
 
@@ -467,8 +469,8 @@ function renderDash() {
   const inv   = d.investments.reduce((s,i)=>s+(parseFloat(i.Amount)||0),0);
   const gross = d.trades.reduce((s,t)=>s+pnl(t),0);
   const exp   = d.expenses.reduce((s,e)=>s+(parseFloat(e.Amount)||0),0);
-  const net   = gross - exp;
-  const bal   = inv + net;
+  const net = gross - exp;
+  const bal = inv + net;
   const wins  = d.trades.filter(t=>t.Outcome==='PROFIT').length;
   const losses= d.trades.filter(t=>t.Outcome==='LOSS').length;
   const wr    = d.trades.length ? Math.round(wins/d.trades.length*100) : 0;
@@ -501,7 +503,16 @@ function renderDash() {
   `;
 
   const avgWinSession = wins ? totalProfitsGained / wins : 0;
-  const capitalOverheadMultiplier = exp > 0 ? (totalProfitsGained / exp).toFixed(2) : totalProfitsGained;
+  
+  // ── ADVANCED RECOVERY & BREAK-EVEN COMPUTATION MATH ──
+  const netDrawdownDeficit = net < 0 ? Math.abs(net) : 0;
+  const grossBreakevenAmountNeeded = gross < 0 ? Math.abs(gross) : 0;
+  
+  const tradesToGrossBreakeven = (grossBreakevenAmountNeeded > 0 && avgWinSession > 0) 
+    ? Math.ceil(grossBreakevenAmountNeeded / avgWinSession) 
+    : 0;
+    
+  const dynamicProfitabilityHorizon = inv;
 
   const targetContainer = document.getElementById('dash-content');
   if (!targetContainer) return;
@@ -535,6 +546,41 @@ function renderDash() {
       <div class="sc"><div class="sv cb">${wr}%</div><div class="sl">Win Rate</div></div>
     </div>
 
+    <div class="sl2">Break-Even &amp; Recovery Blueprint</div>
+    <div class="card" style="border: 1px solid var(--border2); background: linear-gradient(180deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.6) 100%);">
+      ${netDrawdownDeficit > 0 ? `
+        <div class="sum-row">
+          <div>
+            <div class="sum-label" style="color: var(--red);">Net Break-Even Shortfall</div>
+            <div class="sum-sub">Total revenue required to balance your net portfolio value</div>
+          </div>
+          <div class="sum-val cr exact">${fmt(-netDrawdownDeficit)}</div>
+        </div>
+        <div class="sum-row">
+          <div>
+            <div class="sum-label" style="color: var(--blue);">Gross Recovery Multiplier</div>
+            <div class="sum-sub">Estimated winning trades required based on your avg win value</div>
+          </div>
+          <div class="sum-val cb exact">${tradesToGrossBreakeven > 0 ? tradesToGrossBreakeven + ' Wins' : 'N/A'}</div>
+        </div>
+      ` : `
+        <div class="sum-row">
+          <div>
+            <div class="sum-label" style="color: var(--green);">Account Status: Stable</div>
+            <div class="sum-sub">Net baseline is balanced. Zero recovery deficit detected.</div>
+          </div>
+          <div class="sum-val cg exact">₹0</div>
+        </div>
+      `}
+      <div class="sum-row">
+        <div>
+          <div class="sum-label" style="color: var(--gold);">Profitability Horizon Point</div>
+          <div class="sum-sub">Portfolio target milestone where you break back into positive growth territory</div>
+        </div>
+        <div class="sum-val cgo exact">${fmt(dynamicProfitabilityHorizon)}</div>
+      </div>
+    </div>
+
     ${streak>1?`<div class="insight"><strong>🔥 ${streak}-trade win streak</strong> — structural momentum active.</div>`:''}
 
     <div class="sl2">Monthly Summary — Exact Figures</div>
@@ -549,24 +595,6 @@ function renderDash() {
             <div class="sum-val ${r.mn>=0?'cg':'cr'} exact">${fmt(r.mn)}</div>
           </div>
         </div>`).join('')}
-    </div>
-
-    <div class="sl2">Structural Session KPI Efficiency Ledger</div>
-    <div class="card">
-      <div class="sum-row">
-        <div>
-          <div class="sum-label">Avg Return Per Win Session</div>
-          <div class="sum-sub">Aggregated velocity output quotient</div>
-        </div>
-        <div class="sum-val cg exact">${fmt(avgWinSession)}</div>
-      </div>
-      <div class="sum-row">
-        <div>
-          <div class="sum-label">Profit / Expense Overhead Ratio</div>
-          <div class="sum-sub">Gross earnings vs systemic capital run-rate</div>
-        </div>
-        <div class="sum-val cb exact">x ${capitalOverheadMultiplier}</div>
-      </div>
     </div>
   `;
   document.getElementById('dash-ts').textContent = 'Live Cloud Sync Active';
